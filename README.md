@@ -1,4 +1,4 @@
-![IMG_1035B.JPG]({{adamlauretig.github.io}}/assets/IMG_1035B.JPG)
+![IMG_1035B_1.JPG]({{adamlauretig.github.io}}/assets/IMG_1035B.JPG)
 
 
 ## Adam Lauretig
