@@ -1,5 +1,3 @@
-[IMG_1035B_1.JPG](https://github.com/adamlauretig/adamlauretig.github.io/tree/master/assets/IMG_1035B_1.JPG)
-
 
 ## Adam Lauretig
 
