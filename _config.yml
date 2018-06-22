@@ -1,0 +1,4 @@
+theme: jekyll-theme-minimal
+title: Adam Lauretig
+plugins:
+  - jekyll-sitemap
