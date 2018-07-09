@@ -2,107 +2,116 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Homes on Adam Lauretig&#39;s Professional Website</title>
-    <link>adamlauretig.github.io/home/</link>
+    <link>/adamlauretig.github.io/home/</link>
     <description>Recent content in Homes on Adam Lauretig&#39;s Professional Website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018</copyright>
     <lastBuildDate>Sun, 15 Oct 2017 00:00:00 -0400</lastBuildDate>
     
-	<atom:link href="adamlauretig.github.io/home/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/adamlauretig.github.io/home/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Academic</title>
-      <link>adamlauretig.github.io/home/hero/</link>
+      <link>/adamlauretig.github.io/home/hero/</link>
       <pubDate>Sun, 15 Oct 2017 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/hero/</guid>
+      <guid>/adamlauretig.github.io/home/hero/</guid>
       <description>The highly flexible website framework for Hugo with an extensible plugin mechanism. Create a beautifully simple site in under 10 minutes 🚀 Latest release  
 (function defer() { if (window.jQuery) { jQuery(document).ready(function(){ GetLatestReleaseInfo(); }); } else { setTimeout(function() { defer() }, 50); } })(); function GetLatestReleaseInfo() { $.getJSON(&#39;https://api.github.com/repos/gcushen/hugo-academic/tags&#39;).done(function (json) { let release = json[0]; // let downloadURL = release.zipball_url; $(&#39;#academic-release&#39;).text(&#39;Latest release &#39; + release.name); }); }  </description>
     </item>
     
     <item>
       <title></title>
-      <link>adamlauretig.github.io/home/about/</link>
+      <link>/adamlauretig.github.io/home/about/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/about/</guid>
+      <guid>/adamlauretig.github.io/home/about/</guid>
       <description>Biography I am a Ph.D. candidate in Political Science at The Ohio State University, with a focus on political methodology and foreign policy decision-making. In my dissertation, I develop a new model, the Structural Bayesian Document Embedding, which allows us to investigate the effect of metadata on the meaning of individual words. I also propose an inference strategy to return interpretable estimates of the effect of covariates on meaning. I use this model to investigate the determinants of threat perception during the Cold War among elites, drawing on the recently digitized Foreign Relations of the United States.</description>
     </item>
     
     <item>
       <title>Selected Publications</title>
-      <link>adamlauretig.github.io/home/publications_selected/</link>
+      <link>/adamlauretig.github.io/home/publications_selected/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/publications_selected/</guid>
+      <guid>/adamlauretig.github.io/home/publications_selected/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Recent Publications</title>
-      <link>adamlauretig.github.io/home/publications/</link>
+      <link>/adamlauretig.github.io/home/publications/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/publications/</guid>
+      <guid>/adamlauretig.github.io/home/publications/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Recent &amp; Upcoming Talks</title>
-      <link>adamlauretig.github.io/home/talks/</link>
+      <link>/adamlauretig.github.io/home/talks/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/talks/</guid>
+      <guid>/adamlauretig.github.io/home/talks/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Recent Posts</title>
-      <link>adamlauretig.github.io/home/posts/</link>
+      <link>/adamlauretig.github.io/home/posts/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/posts/</guid>
+      <guid>/adamlauretig.github.io/home/posts/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Projects</title>
-      <link>adamlauretig.github.io/home/projects/</link>
+      <link>/adamlauretig.github.io/home/projects/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/projects/</guid>
+      <guid>/adamlauretig.github.io/home/projects/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Teaching</title>
-      <link>adamlauretig.github.io/home/teaching/</link>
+      <link>/adamlauretig.github.io/home/teaching/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/teaching/</guid>
+      <guid>/adamlauretig.github.io/home/teaching/</guid>
       <description>This is an example of using the custom widget to create your own homepage section.
-I am the instructor of record for the following courses at The Ohio State University:
- POL4782: Data Analysis in Political Science II [https://www.dropbox.com/s/dhdithg6bv4nltm/POLI4782v5.pdf?raw=1]  I am the graduate teachining assistant for the Graduate methods sequence, 2018-2019.</description>
+I am a teaching instructor for the following courses at University X:
+ POL4782: Data Analysis in Political Science II  </description>
     </item>
     
     <item>
       <title>Tags</title>
-      <link>adamlauretig.github.io/home/tags/</link>
+      <link>/adamlauretig.github.io/home/tags/</link>
       <pubDate>Wed, 20 Sep 2017 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/tags/</guid>
+      <guid>/adamlauretig.github.io/home/tags/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Contact</title>
-      <link>adamlauretig.github.io/home/contact/</link>
+      <link>/adamlauretig.github.io/home/contact/</link>
       <pubDate>Wed, 20 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/home/contact/</guid>
+      <guid>/adamlauretig.github.io/home/contact/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/adamlauretig.github.io/home/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/adamlauretig.github.io/home/about/</guid>
+      <description>code{white-space: pre;} pre:not([class]) { background-color: white; }  if (window.hljs &amp;&amp; document.readyState &amp;&amp; document.readyState === &#34;complete&#34;) { window.setTimeout(function() { hljs.initHighlighting(); }, 0); }  h1 { font-size: 34px; } h1.title { font-size: 38px; } h2 { font-size: 30px; } h3 { font-size: 24px; } h4 { font-size: 18px; } h5 { font-size: 16px; } h6 { font-size: 12px; } .table th:not([align]) { text-align: left; }    .</description>
     </item>
     
   </channel>
