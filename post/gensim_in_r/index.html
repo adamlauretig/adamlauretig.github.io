@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.42.1" />
+  <meta name="author" content="Adam Lauretig">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="Introduction Gensim is a powerful Python library for text modeling. It incorporates a variety of models, many of which are not available in R. However, the recently developed reticulate package provides a solution for the R user who wants to dip their toes in, without learning Python. It allows the user to call Python code which behaves like R code, and to seamlessly pass R and Python objects back and forth.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="adamlauretig.github.io/post/gensim_in_r/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#EF525B">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+      
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+      
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/adamlauretig.github.io/styles.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  <link rel="feed" href="adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  
+
+  <link rel="manifest" href="/adamlauretig.github.io/site.webmanifest">
+  <link rel="icon" type="image/png" href="/adamlauretig.github.io/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/adamlauretig.github.io/img/icon-192.png">
+
+  <link rel="canonical" href="adamlauretig.github.io/post/gensim_in_r/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@adamlauretig">
+  <meta property="twitter:creator" content="@adamlauretig">
+  
+  <meta property="og:site_name" content="Adam Lauretig&#39;s Professional Website">
+  <meta property="og:url" content="adamlauretig.github.io/post/gensim_in_r/">
+  <meta property="og:title" content="Using Gensim in R | Adam Lauretig&#39;s Professional Website">
+  <meta property="og:description" content="Introduction Gensim is a powerful Python library for text modeling. It incorporates a variety of models, many of which are not available in R. However, the recently developed reticulate package provides a solution for the R user who wants to dip their toes in, without learning Python. It allows the user to call Python code which behaves like R code, and to seamlessly pass R and Python objects back and forth.">
+  <meta property="og:locale" content="en-us">
+  
+  
+  
+  
+
+  
+  
+
+  <title>Using Gensim in R | Adam Lauretig&#39;s Professional Website</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/adamlauretig.github.io/">Adam Lauretig&#39;s Professional Website</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Using Gensim in R</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="0001-01-01 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Jan 1, 0001
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Adam Lauretig">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    5 min read
+  </span>
+  
+
+  
+  
+
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Using%20Gensim%20in%20R&amp;url=adamlauretig.github.io%2fpost%2fgensim_in_r%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=adamlauretig.github.io%2fpost%2fgensim_in_r%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=adamlauretig.github.io%2fpost%2fgensim_in_r%2f&amp;title=Using%20Gensim%20in%20R"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=adamlauretig.github.io%2fpost%2fgensim_in_r%2f&amp;title=Using%20Gensim%20in%20R"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Using%20Gensim%20in%20R&amp;body=adamlauretig.github.io%2fpost%2fgensim_in_r%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p><a href="https://radimrehurek.com/gensim/">Gensim</a> is a powerful Python library for text modeling. It incorporates a variety of models, many of which are not available in R. However, the recently developed <a href="https://cran.r-project.org/web/packages/reticulate/index.html">reticulate</a> package provides a solution for the R user who wants to dip their toes in, without learning Python. It allows the user to call Python code which behaves like R code, and to seamlessly pass R and Python objects back and forth. In this document, I will show how to install <code>gensim</code>, call it from <code>reticulate</code>, estimate word embeddings, and perform vector arithmetic.</p>
+</div>
+<div id="setup" class="section level1">
+<h1>Setup</h1>
+<p>I use Python 3.6, as distributed with <a href="https://www.anaconda.com/download/#macos">Anaconda</a>, and once Anaconda is installed, I install Gensim at the command line, using pip. To do this, I type</p>
+<pre class="bash"><code>pip install gensim</code></pre>
+<p>at the terminal.</p>
+<p>I assume you are using recent versions of R, and RStudio. To install thereticulate package from CRAN:</p>
+<pre class="r"><code>install.packages(&quot;reticulate&quot;)</code></pre>
+<p>We’ll also use the quanteda and stringr packages, to install them:</p>
+<pre class="r"><code>install.packages(c(&quot;quanteda&quot;, &quot;stringr&quot;))</code></pre>
+</div>
+<div id="loading-gensim" class="section level1">
+<h1>Loading Gensim</h1>
+<p>Importing Gensim with reticulate is very similar to loading an R package more generally:</p>
+<pre class="r"><code>library(reticulate)
+gensim &lt;- import(&quot;gensim&quot;) # import the gensim library
+Word2Vec &lt;- gensim$models$Word2Vec # Extract the Word2Vec model
+multiprocessing &lt;- import(&quot;multiprocessing&quot;) # For parallel processing</code></pre>
+<p>In gensim, we extract the <code>Word2Vec</code> object from the <code>models</code> object, using the <code>$</code> operator. Thanks to reticulate, object-oriented nature of python is changed into something R users can recognize, and we can treat <code>Word2vec</code> as we would any other R function</p>
+</div>
+<div id="prepping-the-data" class="section level1">
+<h1>Prepping the data</h1>
+<p>As an example model, we’ll use the text of inauguration speeches from the <code>quanteda</code> package. we just want to extract the text we’ll use to a character vector, which has 58 elements. We’ll lowercase all of the tokens involved, remove punctuation, and then collapse the resulting <code>tokens</code> object back into a set of character vectors.</p>
+<pre class="r"><code>library(quanteda)</code></pre>
+<pre><code>## Package version: 1.3.0</code></pre>
+<pre><code>## Parallel computing: 2 of 8 threads used.</code></pre>
+<pre><code>## See https://quanteda.io for tutorials and examples.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;quanteda&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:utils&#39;:
+## 
+##     View</code></pre>
+<pre class="r"><code>library(stringr)
+txt_to_use &lt;- quanteda::data_corpus_inaugural$documents$texts
+txt_to_use &lt;- tolower(txt_to_use)
+txt_to_use &lt;- stringr::str_replace_all(txt_to_use, &quot;[[:punct:]]&quot;, &quot;&quot;)
+txt_to_use &lt;- stringr::str_replace_all(txt_to_use, &quot;\n&quot;, &quot; &quot;)
+txt_to_use &lt;- (str_split(txt_to_use, &quot; &quot;))</code></pre>
+</div>
+<div id="creating-word2vec" class="section level1">
+<h1>Creating Word2vec</h1>
+<p>In python, unlike <code>R</code>, we create the model we want to run <em>before</em> we run it, supplying it with the various parameters it will take. We’ll create an object called <code>basemodel</code>, which uses the skip-gram w/negative sampling implementation of <em>word2vec</em>. We’ll use a window size of 5, considering words within five words of each side of a target word. We’ll do 3 sweeps through the data, but in practice, you should do more. We’ll tell gensim to use skipgram “<code>sg</code>” with negative sampling “<code>ns</code>”, rather than the hierarchical softmax. Finally, we’ll use a dimensionality of 25, for the embedding dimensions, but again, in practice, you should probably use more.</p>
+<pre class="r"><code>basemodel = Word2Vec(
+    workers = 1, # using 1 core
+    window = 5L,
+    iter = 3L, # iter = sweeps of SGD through the data; more is better
+    sg = 1L,
+    hs = 0L, negative = 1L, # we only have scoring for the hierarchical softmax setup
+    size = 25L
+)</code></pre>
+</div>
+<div id="training-the-model" class="section level1">
+<h1>Training the model</h1>
+<p>To train the model, we’ll first build a vocabulary from the inaugural speeches we cleaned earlier. We’ll then call the <code>train</code> object from <code>basemodel</code>, the way you would call an object in <code>R</code>.</p>
+<pre class="r"><code>basemodel$build_vocab(sentences = txt_to_use)
+basemodel$train(
+  sentences = txt_to_use,
+  epochs = basemodel$iter, 
+  total_examples = basemodel$corpus_count)</code></pre>
+<pre><code>## [1] 249606</code></pre>
+</div>
+<div id="examining-the-results" class="section level1">
+<h1>Examining the Results</h1>
+<p>We can examine the output from the model, this will produce a vector 25 long. This, however, is not particularly informative.</p>
+<pre class="r"><code>basemodel$wv$word_vec(&quot;united&quot;)</code></pre>
+<pre><code>##  [1] -0.27610675  0.04439235 -0.09606278  0.35171315 -0.12962499
+##  [6] -0.26679245 -0.02955173 -0.40671036  0.38693991 -0.21094002
+## [11]  0.13589610  0.02575829  0.38631445 -0.03436592  0.12842824
+## [16] -0.07685975 -0.12671033 -0.18567589 -0.34271398  0.07759935
+## [21] -0.23957512  0.18435398  0.17279620  0.19887859 -0.15089950</code></pre>
+<p>But that isn’t particularly informative. Instead, thanks to <code>reticulate</code>’s ability to communicate between <code>R</code> and python, we can bring the vectors into R, and then calculate cosine distance (a measure of word similarity).</p>
+<pre class="r"><code>library(Matrix)
+embeds &lt;- basemodel$wv$syn0
+rownames(embeds) &lt;- basemodel$wv$index2word
+
+
+# function for cosine distance
+closest_vector &lt;- function(vec1, mat1){
+  vec1 &lt;- Matrix(vec1, nrow = 1, ncol = length(vec1))
+  mat1 &lt;- Matrix(mat1)
+  mat_magnitudes &lt;- rowSums(mat1^2)
+  vec_magnitudes &lt;- rowSums(vec1^2)
+  sim &lt;- (t(tcrossprod(vec1, mat1)/
+      (sqrt(tcrossprod(vec_magnitudes, mat_magnitudes)))))
+  sim2 &lt;- matrix(sim, dimnames = list(rownames(sim)))
+  
+  w &lt;- sim2[order(-sim2),,drop = FALSE]
+  w[1:10,]
+}
+  
+closest_vector(embeds[&quot;united&quot;, ], embeds)</code></pre>
+<pre><code>##       united constitution       states        union           of 
+##    1.0000000    0.9420215    0.9345622    0.9211636    0.9182149 
+##      several          the   government        state        great 
+##    0.8950720    0.8711545    0.8473224    0.8286366    0.8267284</code></pre>
+<pre class="r"><code>closest_vector(embeds[&quot;united&quot;, ] + embeds[&quot;states&quot;, ], embeds)</code></pre>
+<pre><code>##       states       united constitution           of        union 
+##    0.9849453    0.9819984    0.9441884    0.9162174    0.8956774 
+##          the      several   government           by       defend 
+##    0.8830838    0.8550234    0.8057789    0.7957479    0.7955239</code></pre>
+<p>This result isn’t bad, for such a small corpus, with relatively few vectors. We can even do more complicated vector arithmetic:</p>
+<pre class="r"><code>closest_vector(embeds[&quot;american&quot;, ] - embeds[&quot;war&quot;, ], embeds)</code></pre>
+<pre><code>##    enlarge     leaves   repeated    various   passions  railroads 
+##  0.5077056  0.4729700  0.4480979  0.4165418  0.4109706  0.4070503 
+## protective     method    factory  affecting 
+##  0.4039130  0.3968945  0.3883827  0.3787029</code></pre>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>Overall, this is an introduction to <code>reticulate</code>, and to estimating word embeddings with gensim. I showed how to prep text, estimate embeddings, and perform vector arithmetic on these embeddings.</p>
+</div>
+
+    </div>
+
+    
+
+
+    
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/adamlauretig.github.io/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+
+  </body>
+</html>
+
