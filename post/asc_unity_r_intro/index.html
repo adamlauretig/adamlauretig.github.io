@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.42.1" />
+  <meta name="author" content="Adam Lauretig">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="ASC Unity Cluster Ohio State ASC tech has recent made the Unity high-performance cluster available to everyone, with up to 24 cores available for your high performance computing needs. However, access the cluster and running R code in it can be confusing for those not familiar with unix systems. To spare you 3 days of beating your head against the wall and cursing the unix gods, I’ve put together the following introduction to using R on the unix cluster.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/adamlauretig.github.io/post/asc_unity_r_intro/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#EF525B">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+      
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+      
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/adamlauretig.github.io/styles.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  <link rel="feed" href="/adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  
+
+  <link rel="manifest" href="/adamlauretig.github.io/site.webmanifest">
+  <link rel="icon" type="image/png" href="/adamlauretig.github.io/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/adamlauretig.github.io/img/icon-192.png">
+
+  <link rel="canonical" href="/adamlauretig.github.io/post/asc_unity_r_intro/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@adamlauretig">
+  <meta property="twitter:creator" content="@adamlauretig">
+  
+  <meta property="og:site_name" content="Adam Lauretig&#39;s Professional Website">
+  <meta property="og:url" content="/adamlauretig.github.io/post/asc_unity_r_intro/">
+  <meta property="og:title" content="Introduction to R on the ASC Unity Cluster | Adam Lauretig&#39;s Professional Website">
+  <meta property="og:description" content="ASC Unity Cluster Ohio State ASC tech has recent made the Unity high-performance cluster available to everyone, with up to 24 cores available for your high performance computing needs. However, access the cluster and running R code in it can be confusing for those not familiar with unix systems. To spare you 3 days of beating your head against the wall and cursing the unix gods, I’ve put together the following introduction to using R on the unix cluster.">
+  <meta property="og:locale" content="en-us">
+  
+  
+  
+  
+
+  
+  
+
+  <title>Introduction to R on the ASC Unity Cluster | Adam Lauretig&#39;s Professional Website</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/adamlauretig.github.io/">Adam Lauretig&#39;s Professional Website</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#posts">
+            
+            <span>Recent Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Introduction to R on the ASC Unity Cluster</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="0001-01-01 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Jan 1, 0001
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Adam Lauretig">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    7 min read
+  </span>
+  
+
+  
+  
+
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Introduction%20to%20R%20on%20the%20ASC%20Unity%20Cluster&amp;url=%2fadamlauretig.github.io%2fpost%2fasc_unity_r_intro%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fadamlauretig.github.io%2fpost%2fasc_unity_r_intro%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fadamlauretig.github.io%2fpost%2fasc_unity_r_intro%2f&amp;title=Introduction%20to%20R%20on%20the%20ASC%20Unity%20Cluster"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fadamlauretig.github.io%2fpost%2fasc_unity_r_intro%2f&amp;title=Introduction%20to%20R%20on%20the%20ASC%20Unity%20Cluster"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Introduction%20to%20R%20on%20the%20ASC%20Unity%20Cluster&amp;body=%2fadamlauretig.github.io%2fpost%2fasc_unity_r_intro%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="asc-unity-cluster" class="section level2">
+<h2>ASC Unity Cluster</h2>
+<p>Ohio State ASC tech has recent made the <a href="https://osuasc.teamdynamix.com/TDClient/KB/?CategoryID=4582" title="Unity">Unity high-performance</a> cluster available to everyone, with up to 24 cores available for your high performance computing needs. However, access the cluster and running R code in it can be confusing for those not familiar with unix systems. To spare you 3 days of beating your head against the wall and cursing the unix gods, I’ve put together the following introduction to using R on the unix cluster. In this document, I will: introduce the basics of interacting with Unity; illustrate how to load packages in the Unity environment; discuss how to write the bash files for running code to take advantage of the parallel environment; and demonstrate how to upload a file, run a batch R script, and download the results.</p>
+</div>
+<div id="connecting-to-the-unity-cluster" class="section level2">
+<h2>Connecting to the Unity cluster</h2>
+<p>On a Mac, to connect to the Unity cluster, open the terminal, and type:</p>
+<pre class="bash"><code>ssh -l username.N unity.asc.ohio-state.edu
+</code></pre>
+<p>where username.N is your Ohio State name.number. You’ll be prompted for your OSU password, which you should enter. If you’re on a Windows computer, you’ll use PuTTy to connect to the Unity cluster. If you log in, you will see the following:</p>
+<pre class="bash"><code>-----------------------------------------
+Welcome to Unity.
+
+This is a college-wide resource managed by ASCTech
+
+Information on how to use the Unity Cluster:
+http://go.osu.edu/unityhelp
+
+For assistance please email asctech@osu.edu
+or submit request to: http://go.osu.edu/unitysubmit
+-----------------------------------------
+
+
+[username.N@unity-1 ~]$ 
+</code></pre>
+</div>
+<div id="in-the-unity-environment" class="section level2">
+<h2>In the Unity Environment</h2>
+<p>To list the current contents of your working directory, type:</p>
+<pre class="bash"><code>ls</code></pre>
+<p>at the prompt. We then want to know which softwares we can use, which are in <em>modules</em>. To see the modules available, type:</p>
+<pre class="bash"><code>module avail</code></pre>
+<p>and to load the R module, type:</p>
+<pre class="bash"><code>module load intel/16.0.3 
+module load R/3.4.2</code></pre>
+<p>since, R depends on the intel module. To open R, type</p>
+<pre class="bash"><code>R</code></pre>
+<p>which will open an R command line, from where you can, for example, install packages. To see the currently installed packages, type:</p>
+<pre class="r"><code>installed.packages()</code></pre>
+<p>which will generate a reasonably long list of installed packages. This is not the preferred way to interact with R, you should batch-schedule your jobs, so that the system can find the optimal time for your job.</p>
+<p>This is all we’ll need for now, so quit R, and don’t save the workspace image:</p>
+<pre class="r"><code>q()</code></pre>
+<p>Now, log out of the unity environment, and type:</p>
+<pre class="bash"><code>logout</code></pre>
+<p>which will return your terminal to the original directory. Log out now, we’ll set up our code on the local computer, and then send it to the cluster for batch processing.</p>
+</div>
+<div id="setting-up-code-to-run-in-a-batch-setting" class="section level2">
+<h2>Setting up Code to run in a batch setting</h2>
+<p>I’ve provided some sample data, and a sample script (<code>fake_data.rdata</code>, and <code>toy_function.R</code> respectively), which paste a number and letter together and save them to a data frame. To run this as a batch process, where we take advantage of the parallel computing possibilities we will need to write a <code>.pbs</code> file to schedule our job on the cluster, more details <a href="https://osuasc.teamdynamix.com/TDClient/KB/ArticleDet?ID=23180" title="Unity cluster">here</a> and <a href="https://www.osc.edu/content/batch-tutorial" title="OSC tutorial">here</a>.</p>
+<p>An example batch script would be</p>
+<pre class="bash"><code>#!/bin/bash
+#PBS -l walltime=00:10:00
+#PBS -l nodes=1:ppn=3,mem=3GB
+#PBS -N toy_bash_job
+#PBS -j oe 
+#PBS -m abe
+#PBS -M username.N@osu.edu
+
+
+#COMMANDS TO RUN
+module load intel/16.0.3 
+module load R/3.4.2 
+#There are multiple versions of R and do check whether the version of R is compatible with the code you are going to execute.
+Rscript ~/toy_function.R</code></pre>
+<p>where walltime (maximum 2 weeks according to current policy, but may be increased upon request at <a href="https://go.osu.edu/unitysubmit">here</a> ) is the amount of time you expect to use, nodes and ppn are the number of cores (2 each with 12 possible cores), mem is the amount of memory you’ll need, <code>-N</code> is the name of the job, <code>-j oe</code> writes errors to standard output, <code>-m abe</code> tells the cluster to email you (abort, begin, end), and <code>-M</code> is the address to email you.</p>
+<p>Under <code>#COMMANDS TO RUN</code>, <code>module load intel/16.0.3</code> calls the necessary intel compiler, and <code>module load R/3.3.2</code> is loads <code>R</code>, to batch execute the script. Just using <code>module load intel</code> or <code>module load R</code> in the bash script may load the default version or even causes the cluster to throw esoteric errors. This is because the way unix store the files. Either one can learn a great deal about unix file structures to solve this problem, or copy and paste the above code. I recommend the second approach.</p>
+<p>To write a <code>.pbs</code> file on a Mac, open textedit (or another plain-text editor), write the commands for your bash file, uncheck “hide extension,” uncheck “if no extension is provided use ‘.txt’,” and change the file extension to <code>.pbs</code>. To write a <code>.pbs</code> file on a Windows, I recommend Notepad++ (or another plain-text editor), which allows you to save the bash file with <code>.pbs</code> extension and highlights the grammar with plug-ins if wanted.</p>
+<p>The function we’re testing is simple: given 10000 letters, paste its location in a list, and underscore, and then the letter, and output a data.table. The setup looks like this:</p>
+<pre class="r"><code># if you need to install a package, it can be helpful to put the install 
+# command in your script itself, ie: 
+# install.packages(&quot;parallel&quot;, repos = &quot;https://cloud.r-project.org/&quot;)
+# install.packages(&quot;data.table&quot;, repos = &quot;https://cloud.r-project.org/&quot;)
+library(parallel)
+library(data.table)
+load(&quot;~/fake_data.rdata&quot;) # note that we&#39;re using short filepaths
+paste_number_letter &lt;- function(i = NULL, letter_vector = NULL){
+  data.table(paste0(letter_vector[i], &quot;_&quot;, i))
+}
+length_of_letters &lt;- length(fake_data)
+function_out &lt;- mclapply(1:length_of_letters, paste_number_letter, 
+  letter_vector = fake_data, mc.cores = 3)
+toy_dt &lt;- rbindlist(function_out)
+save(toy_dt, file = &quot;~/toy_dt.rdata&quot;)</code></pre>
+<p>where the parallel library supplies the <code>mclapply</code> function, for which, we tell it to use three cores, in <code>mc.cores</code>. The file path for loading and saving is just <code>~/</code>, since we’ll put everything in the same directory.</p>
+</div>
+<div id="uploading-files" class="section level2">
+<h2>Uploading Files</h2>
+<p>To upload our files, we’ll use the <code>scp</code>(secure copy) command in the terminal. This has the format <code>scp [source filepath] [target file path]</code>:</p>
+<pre class="bash"><code>scp ~/data/Unity_intro/demo_pbs.pbs username.N@unity.asc.ohio-state.edu:/home/username.N
+
+scp ~/data/Unity_intro/fake_data.rdata username.N@unity.asc.ohio-state.edu:/home/username.N
+
+scp ~/data/Unity_intro/toy_function.R username.N@unity.asc.ohio-state.edu:/home/username.N
+</code></pre>
+<p>where <code>~/data/Unity_intro/</code> is the local path, and <code>username.N@unity.asc.ohio-state.edu:/home/username.N</code> is the path on the cluster. If you are using PuTTy on a windows, the <code>[source filepath]</code> must use “\” or “/” to separate and you will be asked for your username and password on ASC domain. However, a more convenient way of uploading files from a local machine to Unity server is to use the SHTP/SFTP connection at <code>unity.asc.ohio-state.edu</code> domain (with your username and password on ASC domain) via software like <a href="https://filezilla-project.org/">FileZilla</a>. As far as I have tried, <code>pscp</code> is not supported.</p>
+</div>
+<div id="running-batch-code" class="section level2">
+<h2>Running batch code</h2>
+<p>We’ll now log back into the unity cluster, and run our code with</p>
+<pre class="bash"><code>qsub demo_pbs.pbs</code></pre>
+<p>Which will email us when the job starts, and ends. If the email you receive when is ends has <code>Exit_status=0</code>, the code ran successfully, and if it has <code>Exit_status=127</code>, it failed. To see the error message if it fails, type</p>
+<pre class="bash"><code>cat toy_bash_job.o[JOBNUM]</code></pre>
+<p>where <code>toy_bash_job</code> is the name of the job, and <code>[JOBNUM]</code> is the job number the cluster assigns. An example filename might be <code>toy_bash_job.o1234</code>. <code>cat</code> tells the terminal to print the file to the screen.</p>
+<p>If it works, <code>toy_dt.rdata</code> with appear when we type <code>ls</code>, and an output file with the job name and number will appear as well.</p>
+</div>
+<div id="download-the-result" class="section level2">
+<h2>Download the Result</h2>
+<p>To download the result back to your computer, we’ll use <code>scp</code> in reverse</p>
+<pre class="bash"><code>scp username.N@unity.asc.ohio-state.edu:/home/username.N/toy_dt.rdata ~/data/Unity_intro/ 
+</code></pre>
+<p>which we can then open in R. Again you can download the result from the SHTP/SFTP connection if you are using a client like FileZilla, which is preferable in Windows.</p>
+</div>
+<div id="performance-comparison" class="section level2">
+<h2>Performance comparison</h2>
+<div id="courtesy-of-hengrui-luo" class="section level3">
+<h3>(Courtesy of Hengrui Luo)</h3>
+<p>For example, if we run the bootstrapping estimation of variance of linear coefficient estimator, then the efficiency of bootstrapping will be greatly improved even if we do NOT implement any parallel coding.</p>
+<p>If you increase the bootstrapping sample size(<code>bootstrap_size</code> in <code>parallel_bootstrap.R</code>), such a difference in execution time will be more obvious.</p>
+<pre class="r"><code>On a 8-core personal machine:
+Usual bootstrapping yields
+   user  system elapsed 
+    2.7     0.0     2.7 
+Parallel bootstrapping yields
+   user  system elapsed 
+   0.57    0.20    1.96 </code></pre>
+<p>Comparatively, on a 24-core ASC Unity node, the performance is greatly improved by a large margin:</p>
+<pre class="r"><code>Usual bootstrapping yields
+   user  system elapsed
+  1.199   0.042   1.242
+Parallel bootstrapping yields
+   user  system elapsed
+  2.348   0.822   0.417</code></pre>
+</div>
+</div>
+<div id="existing-problems" class="section level2">
+<h2>Existing problems</h2>
+<p>The current configuration of unity cluster does not allow a local R library but ask you to install all packages to personal library. This causes a lot of problems, I would like to point out two of them.</p>
+<ol style="list-style-type: decimal">
+<li><p><code>rjags</code> for Gibbs sampler using JAGS may not work due to its author’s comment <a href="https://sourceforge.net/p/mcmc-jags/bugs/38/">here</a>.</p></li>
+<li><p><code>Rcpp</code> may cause a lot of problems including failure of compilation of code and other issues. To resolve the problem, use <code>rm</code> command under (PuTTY) command lines to remove the personal library of <code>Rcpp</code> packages in order to clean the mess.</p></li>
+</ol>
+</div>
+
+    </div>
+
+    
+
+
+    
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/adamlauretig.github.io/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+
+  </body>
+</html>
+
