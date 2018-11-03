@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.42.1" />
+  <meta name="author" content="Adam Lauretig">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="Introduction I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment \(A\) at time \(t\) as \(A_{t}\), and covariates \(X\) for individual \(i\) at time \(t\) as \(X_{i,t}\). We are interested in the average treatment effect \(Y_{A = 1} - Y_{A = 0}\) in normal causal inference questions, however, in this case, because \(A\) is continuous and we’re interested in the history of treatment on our outcome \(Y\), inference is a little more difficult.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/adamlauretig.github.io/post/generalized-propensity-score-weighting/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#EF525B">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+      
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+      
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/adamlauretig.github.io/styles.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  <link rel="feed" href="/adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  
+
+  <link rel="manifest" href="/adamlauretig.github.io/site.webmanifest">
+  <link rel="icon" type="image/png" href="/adamlauretig.github.io/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/adamlauretig.github.io/img/icon-192.png">
+
+  <link rel="canonical" href="/adamlauretig.github.io/post/generalized-propensity-score-weighting/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@adamlauretig">
+  <meta property="twitter:creator" content="@adamlauretig">
+  
+  <meta property="og:site_name" content="Adam Lauretig&#39;s Professional Website">
+  <meta property="og:url" content="/adamlauretig.github.io/post/generalized-propensity-score-weighting/">
+  <meta property="og:title" content="Generalized Propensity Score Weighting | Adam Lauretig&#39;s Professional Website">
+  <meta property="og:description" content="Introduction I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment \(A\) at time \(t\) as \(A_{t}\), and covariates \(X\) for individual \(i\) at time \(t\) as \(X_{i,t}\). We are interested in the average treatment effect \(Y_{A = 1} - Y_{A = 0}\) in normal causal inference questions, however, in this case, because \(A\) is continuous and we’re interested in the history of treatment on our outcome \(Y\), inference is a little more difficult.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-11-03T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-11-03T00:00:00&#43;00:00">
+  
+
+  
+  
+
+  <title>Generalized Propensity Score Weighting | Adam Lauretig&#39;s Professional Website</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/adamlauretig.github.io/">Adam Lauretig&#39;s Professional Website</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Generalized Propensity Score Weighting</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2018-11-03 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Nov 3, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Adam Lauretig">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    13 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/adamlauretig.github.io/categories/causal-inference/">Causal Inference</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Generalized%20Propensity%20Score%20Weighting&amp;url=%2fadamlauretig.github.io%2fpost%2fgeneralized-propensity-score-weighting%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fadamlauretig.github.io%2fpost%2fgeneralized-propensity-score-weighting%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fadamlauretig.github.io%2fpost%2fgeneralized-propensity-score-weighting%2f&amp;title=Generalized%20Propensity%20Score%20Weighting"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fadamlauretig.github.io%2fpost%2fgeneralized-propensity-score-weighting%2f&amp;title=Generalized%20Propensity%20Score%20Weighting"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Generalized%20Propensity%20Score%20Weighting&amp;body=%2fadamlauretig.github.io%2fpost%2fgeneralized-propensity-score-weighting%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment <span class="math inline">\(A\)</span> at time <span class="math inline">\(t\)</span> as <span class="math inline">\(A_{t}\)</span>, and covariates <span class="math inline">\(X\)</span> for individual <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span> as <span class="math inline">\(X_{i,t}\)</span>. We are interested in the average treatment effect <span class="math inline">\(Y_{A = 1} - Y_{A = 0}\)</span> in normal causal inference questions, however, in this case, because <span class="math inline">\(A\)</span> is continuous and we’re interested in the history of treatment on our outcome <span class="math inline">\(Y\)</span>, inference is a little more difficult. Drawing on work examining the Generalized Propensity Score <span class="citation">(Hirano and Imbens 2004; Austin 2018)</span>, I simulate covariates, calculate inverse propensity score weights, and ultimately, estimate a reponse model.</p>
+<p>Marginal structural models were originally developed in epidemiology <span class="citation">(Robins, Hernan, and Brumback 2000)</span>, and present a way to estimate potential outcomes for an outcome whose counterfactual depends on treatment <em>history</em>, rather than simply a static treatment. Estimating the inverse probability of treatment weights is similar to other propensity score methods, however, these weights are then used to weight a second stage regression, where the outcome is regressed on the treatment history.</p>
+<p>This post assumes a knowledge of the Rubin Causal Model (“Potential Outcomes”), and the R package <code>data.table()</code>.</p>
+</div>
+<div id="setting-up-parameters-for-simulation" class="section level1">
+<h1>Setting up parameters for simulation</h1>
+<p>Here, I assume there are 3 covariates, 50 individuals, ten time periods, and a lag length of 1. That is, <span class="math inline">\(A_{t}|X_{t}, A_{t-1}, X_{t-1}\)</span> and <span class="math inline">\(X_{t}|X_{t-1}, A_{t-1}\)</span>. We’ll generate <span class="math inline">\(X\)</span> and <span class="math inline">\(A\)</span> in steps, for each of our 3 time periods, along with a constant unobserved confounder <span class="math inline">\(U\)</span> following <span class="citation">Havercroft and Didelez (2012)</span>. Since my interest here is in a continuous treatment, I’ll use OLS to generate <span class="math inline">\(A_{t}\)</span>, plus some Gaussian <span class="math inline">\(\epsilon \sim N(0, 1)\)</span> noise. The challege here comes from incorporating the lagged treatment as well, and how it affects <span class="math inline">\(X_{t}\)</span> and <span class="math inline">\(A_{t}\)</span>, which means that we have to calculate treatment values at each time <span class="math inline">\(t\)</span>.</p>
+<pre class="r"><code>library(data.table)
+library(ggplot2)
+library(mgcv)
+set.seed(614L)
+#number of covariates
+p &lt;- 3
+
+# number of individuals
+I &lt;- 1000
+ids &lt;- paste0(&quot;i_&quot;, 1:I)
+
+# number of time periods
+t &lt;- 3L
+
+treatment_coefs &lt;- matrix(rnorm(n = (2*p) + 1, mean = .5, sd = .25), nrow = 1)
+
+# a time-invariant unobserved confounder
+U &lt;- matrix(runif(n = I, 0, 1), ncol= 1)
+# unobserved confounder effects, 1 for each time period
+U_effect &lt;- rnorm(2, 1, 3)
+
+
+
+# now, generating contemporaneous covariates
+simulate_covariates &lt;- function(time_period, units, columns){
+  set.seed(time_period)
+  X &lt;- matrix(runif(units*columns, -1, 1), nrow = units)
+  for(i in 1:columns){
+    X[, i] &lt;- X[, i] + U%*%U_effect[1]
+  }
+  covariates &lt;- data.table(id = 1:units, time = time_period, X)
+  return(covariates)
+}
+X1 &lt;- simulate_covariates(time_period = 1, units = I, columns = p)
+# now, adding our &quot;lagged&quot; variables. all zeroes since this is t = 1
+X1[, `:=`(
+  lag_1_V1 = 0,
+  lag_1_V2 = 0,
+  lag_1_V3 = 0,
+  lag_1_treatment = 0
+)]
+
+eps &lt;- matrix(rnorm(I, 0, 1), ncol = 1)
+
+A1 &lt;- as.matrix(X1[, 3:9]) %*% t(treatment_coefs) + eps
+time_1_data &lt;- data.table(X1[, 1:5], treatment = A1, X1[, 6:9])
+setnames(time_1_data, c(&quot;treatment.V1&quot;), c(&quot;treatment&quot;))
+
+# for generating X2 and X3
+new_data_coefs &lt;- rnorm(4, 1, 2)</code></pre>
+<p>Now, we’ll generate treatments for each successive time period. Since the data are conditioned on the past treatment, and the past data, simulating this will be a little funky. I’ll do each period by hand, but there’s probably a way to do this which will scale more effectively.</p>
+<pre class="r"><code># time 2 starts
+time_2_data &lt;- as.data.table(time_1_data)
+time_2_data[, time := time + 1]
+time_2_data[, 7:10] &lt;- time_2_data[, 3:6]
+Xt1_temp &lt;- as.matrix(time_2_data[, 7:9])
+Xt2 &lt;- matrix(NA, nrow = I, ncol = p)
+# generate new covariates
+for( i in 1:3){
+ Xt2[, i] &lt;- (as.matrix(Xt1_temp[, i]) %*% new_data_coefs[i]) + as.matrix(time_2_data[, 10]) %*% new_data_coefs[4] 
+ Xt2[, i] &lt;- Xt2[, i] + U %*% U_effect[1]
+}
+
+for(i in 1:p){
+  time_2_data[, (i + 2)] &lt;- Xt2[, i]
+}
+eps &lt;- matrix(rnorm(I, 0, 1), ncol = 1)
+A2 &lt;- as.matrix(time_2_data[, c(3:5, 7:10)])%*% t(treatment_coefs) + eps
+time_2_data[, treatment := A2]
+
+# time 3
+
+time_3_data &lt;- as.data.table(time_2_data)
+time_3_data[, time := time + 1]
+time_3_data[, 7:10] &lt;- time_2_data[, 3:6]
+Xt3 &lt;- matrix(NA, nrow = I, ncol = p)
+# generate new covariates
+for( i in 1:3){
+ Xt3[, i] &lt;- (as.matrix(Xt1_temp[, i]) %*% new_data_coefs[i]) + as.matrix(time_2_data[, 10]) %*% new_data_coefs[4] 
+ Xt3[, i] &lt;- Xt3[, i] + U %*% U_effect[1]
+}
+
+for(i in 1:p){
+  time_3_data[, (i + 3)] &lt;- Xt3[, i]
+}
+eps &lt;- matrix(rnorm(I, 0, 1), ncol = 1)
+A3 &lt;- as.matrix(time_3_data[, c(3:5, 7:10)])%*% t(treatment_coefs) + eps
+time_3_data[, treatment := A3]
+
+covariates &lt;- rbindlist(list(time_1_data, time_2_data, time_3_data))</code></pre>
+<p>Now, we want to generate the outcome variable <span class="math inline">\(Y\)</span>. Since we have a continuous treatment <span class="math inline">\(A\)</span>, we divide the treatment into quantiles <span class="citation">(Austin 2018)</span>, and assign a treatment effect to each quantile. We then simulate our potential outcome for each combination of quantiles over time. Here, we’ll set up terciles, split at <span class="math inline">\(33\% \text{ and } 67\%\)</span>, assign treatment values, and generate our outcome. We’ll treat the treatment value below <span class="math inline">\(33\%\)</span> as the default. I’ve chosen to hard-code the coefficients for the outcome model here, but you could replace them with <code>rnorm()</code>. For personal reasons, I’m interested in the effect on a poisson-distributed outcome, however, as I provide the code here, feel free to modify.</p>
+<pre class="r"><code>cutpoints &lt;- quantile(covariates$treatment, c(.33, .67))
+covariates[,`:=`(
+  treatment_low = ifelse(treatment &lt; cutpoints[1], 1, 0),
+  treatment_mid = ifelse(treatment &gt;= cutpoints[1] &amp; 
+      treatment &lt; cutpoints[2], 1, 0),
+  treatment_high = ifelse(treatment &gt;= cutpoints[2], 1, 0)
+)]
+
+# Now, the outcomes
+# create the matrix of covariates (we&#39;ll treat the low-range as the default)
+
+treatment_history_dt &lt;- dcast.data.table(covariates, id ~ time, value.var = c(&quot;treatment_low&quot;, &quot;treatment_mid&quot;, &quot;treatment_high&quot;))
+X_matrix1 &lt;- as.matrix(treatment_history_dt[, 5:10])
+X_matrix1 &lt;- cbind(1, X_matrix1)
+# treatments for intercept, time periods 1, 2, 3 for mid and high, respectively
+outcome_beta &lt;- c(seq(-5, 1, 1), U_effect[2])
+X_matrix &lt;- cbind(X_matrix1, U)
+# treatment * treatment effect, and then, multiplied by weights
+Y &lt;- (X_matrix%*% outcome_beta) + rnorm(I, 0, 3)
+treatment_history_dt[, Y := Y]
+# what if we have a poisson outcome?
+treatment_history_dt[, Y_lambda := exp(Y)]
+treatment_history_dt[, Y_pois := rpois(n = I, Y_lambda)]
+outcome_beta</code></pre>
+<pre><code>## [1] -5.000000 -4.000000 -3.000000 -2.000000 -1.000000  0.000000  1.000000
+## [8]  6.617358</code></pre>
+</div>
+<div id="recovering-initial-parameters" class="section level1">
+<h1>Recovering initial parameters</h1>
+<p>Now we’ll see how we do at recovering our original parameters.</p>
+<pre class="r"><code>observed_data &lt;- dcast.data.table(covariates, id~time, value.var = c(&quot;V1&quot;, &quot;V2&quot;, &quot;V3&quot;, &quot;treatment&quot;))
+final_data &lt;-  merge(treatment_history_dt, observed_data, by = &quot;id&quot;)</code></pre>
+<p>Let’s start with a simple regression, including covariates, w/our continuous treatment:</p>
+<pre class="r"><code>m1 &lt;- glm(Y_pois ~ treatment_1 + treatment_2 + treatment_3 + 
+    V1_1 + V1_2 + V1_3 + 
+    V2_1 + V2_2 + V2_3 + 
+    V3_1 + V3_2 + V3_3, data = final_data, family = &quot;poisson&quot;)
+summary(m1)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Y_pois ~ treatment_1 + treatment_2 + treatment_3 + 
+##     V1_1 + V1_2 + V1_3 + V2_1 + V2_2 + V2_3 + V3_1 + V3_2 + V3_3, 
+##     family = &quot;poisson&quot;, data = final_data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -17.151   -3.857   -2.241   -1.120   74.868  
+## 
+## Coefficients: (5 not defined because of singularities)
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -0.61719    0.03893  -15.85   &lt;2e-16 ***
+## treatment_1 -10.14704    0.11127  -91.19   &lt;2e-16 ***
+## treatment_2  -0.35349    0.01060  -33.34   &lt;2e-16 ***
+## treatment_3  -0.23807    0.00923  -25.79   &lt;2e-16 ***
+## V1_1         11.04304    0.10240  107.84   &lt;2e-16 ***
+## V1_2          4.90742    0.05126   95.73   &lt;2e-16 ***
+## V1_3               NA         NA      NA       NA    
+## V2_1         -0.83979    0.02042  -41.13   &lt;2e-16 ***
+## V2_2               NA         NA      NA       NA    
+## V2_3               NA         NA      NA       NA    
+## V3_1         -0.84228    0.02008  -41.94   &lt;2e-16 ***
+## V3_2               NA         NA      NA       NA    
+## V3_3               NA         NA      NA       NA    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 67487  on 999  degrees of freedom
+## Residual deviance: 49523  on 992  degrees of freedom
+## AIC: 50341
+## 
+## Number of Fisher Scoring iterations: 8</code></pre>
+<p>Now, let’s use our tercile treatments:</p>
+<pre class="r"><code>m2 &lt;- glm(Y_pois ~ treatment_mid_1 + treatment_mid_2 + treatment_mid_3 + treatment_high_1 + treatment_high_2 + treatment_high_3, data = final_data, family = &quot;poisson&quot;)
+summary(m2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Y_pois ~ treatment_mid_1 + treatment_mid_2 + treatment_mid_3 + 
+##     treatment_high_1 + treatment_high_2 + treatment_high_3, family = &quot;poisson&quot;, 
+##     data = final_data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -10.166   -1.597   -1.378   -0.284   80.388  
+## 
+## Coefficients: (1 not defined because of singularities)
+##                  Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)       0.25367    0.08275   3.065 0.002174 ** 
+## treatment_mid_1  -3.70155    0.05651 -65.503  &lt; 2e-16 ***
+## treatment_mid_2  -1.24377    0.64993  -1.914 0.055658 .  
+## treatment_mid_3  -2.22334    0.60918  -3.650 0.000263 ***
+## treatment_high_1       NA         NA      NA       NA    
+## treatment_high_2  2.75248    0.65672   4.191 2.77e-05 ***
+## treatment_high_3  0.93880    0.66021   1.422 0.155032    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 67487  on 999  degrees of freedom
+## Residual deviance: 39299  on 994  degrees of freedom
+## AIC: 40113
+## 
+## Number of Fisher Scoring iterations: 7</code></pre>
+<p>and we see that our estimates in both cases of the treatment effects are quite different than <code>outcome_beta</code> above. I’ll also point out the <code>NA</code> for <code>treatment_high_1</code>, as there are no treatment values at time 1 which are in the top <span class="math inline">\(3^{rd}\)</span> tercile.</p>
+</div>
+<div id="weighting" class="section level1">
+<h1>Weighting</h1>
+<p>However, we can weight our models with the probability of treatment, which allows us to condition on the covariates which confound selection, throughout the treatment history, a technique originally developed in <span class="citation">(Robins, Hernan, and Brumback 2000)</span>. Here, I’m grabbing the <code>covariates</code> data.table from above, but only keeping those variables we would expect to see in the actual dataset (mostly because the format is easier initially). It’s important to note that throughout the process of estimating the weights, we do not work with our outcome <span class="math inline">\(Y\)</span>, right now, we’re interested in <span class="math inline">\(A_{t = 1}, A_{t = 2}, A_{t = 3}\)</span> and <span class="math inline">\(X_{t}\)</span> and <span class="math inline">\(X_{t-1}\)</span>.</p>
+<pre class="r"><code>observed_covariates &lt;- covariates[,.(id, time, V1, V2, V3, treatment)]
+# observed_covariates &lt;- observed_covariates[ id %in% sample_ids]
+head(observed_covariates)</code></pre>
+<pre><code>##    id time        V1         V2        V3 treatment
+## 1:  1    1 1.4772656 2.00786587 2.6898583 5.6703968
+## 2:  2    1 2.1898973 2.81537133 3.3800436 5.6278032
+## 3:  3    1 1.7195138 1.34037390 2.3076397 5.0996892
+## 4:  4    1 3.1863947 3.27995514 2.2454097 5.9033757
+## 5:  5    1 0.2455929 0.07894221 0.2261046 0.9730124
+## 6:  6    1 2.9160902 1.19751095 1.2838997 4.0934380</code></pre>
+<pre class="r"><code>observed_covariates[, normalized_treatment := (treatment - mean(treatment))/sd(treatment) ]</code></pre>
+<p>Now, to make our weights. Following <span class="citation">(Austin 2018)</span>, we’ll perform OLS regression on our treatment, as our outcome is continuous. Then, for the denominator of our inverse propensity score weights, to calculate the probability of a particular treatment <span class="math inline">\(a^{*}\)</span>, we will calculate <span class="math inline">\(Pr(A = a|a^{*}, \sigma_{a^{*}})\)</span>. The stabilizing numerator is <span class="math inline">\(Pr(A^{*} = a^{*}|0, 1)\)</span> <span class="citation">(Z. Zhang et al. 2016)</span>. Here, we know that we need a single lag of our data to estimate the propensity scores. We then take the product of our stabilized weights from each time period, in order to produce individual-specific weights.</p>
+<pre class="r"><code>observed_covariates_lag &lt;- as.data.table(observed_covariates)
+observed_covariates_lag[, time := time + 1]
+setnames(observed_covariates_lag, 
+  c(&quot;V1&quot;, &quot;V2&quot;, &quot;V3&quot;, &quot;treatment&quot;, &quot;normalized_treatment&quot;), 
+  c(&quot;lag1_V1&quot;, &quot;lag1_V2&quot;, &quot;lag1_V3&quot;, &quot;lag1_treatment&quot;, &quot;lag1_normalized_treatment&quot;))
+observed_covariates_2 &lt;- merge(observed_covariates, observed_covariates_lag, 
+  by = c(&quot;id&quot;, &quot;time&quot;), all.x = TRUE)
+observed_covariates_2[, `:=`(
+  lag1_treatment = ifelse(is.na(lag1_treatment), 0, lag1_treatment),
+  lag1_normalized_treatment = ifelse(
+    is.na(lag1_normalized_treatment), 0, lag1_normalized_treatment),
+  lag1_V1 = ifelse(is.na(lag1_V1), 0, lag1_V1),
+  lag1_V2 = ifelse(is.na(lag1_V2), 0, lag1_V2),
+  lag1_V3 = ifelse(is.na(lag1_V3), 0, lag1_V3)
+)]
+
+a_star_model &lt;- lm(normalized_treatment ~ lag1_normalized_treatment + V1 + V2 + V3 + lag1_V1 + lag1_V2 + lag1_V3, data = observed_covariates_2)
+# observed_covariates[, a_star := predict(a_star_model,type =  &quot;response&quot;)]
+observed_covariates[, ipw_denominator := dnorm(normalized_treatment, mean = a_star_model$fitted.values, sd = sd(a_star_model$fitted.values)) ]
+# observed_covariates[, dnorm(normalized_treatment, mean = a_star_model$fitted.values, sd = summary(a_star_model)$sigma) ]
+
+observed_covariates[, ipw_numerator := dnorm(normalized_treatment, mean = 0, sd = 1) ]
+observed_covariates[, ipw_weight := exp(log(ipw_numerator)-log(ipw_denominator))]
+
+
+wt_cutpoints &lt;- quantile(observed_covariates$ipw_weight[!(is.infinite(observed_covariates$ipw_weight))], probs = c(.01, .99), na.rm = TRUE)
+
+observed_covariates[, ipw_weight_trunc := ifelse(ipw_weight &lt; wt_cutpoints[1], wt_cutpoints[1], ipw_weight)]
+observed_covariates[, ipw_weight_trunc := ifelse(ipw_weight &gt; wt_cutpoints[2], wt_cutpoints[2], ipw_weight)]
+# observed_covariates[, ipw_weight_trunc := ifelse(is.infinite(wt_cutpoints), wt_cutpoints[2], wt_cutpoints)]
+ids_weights &lt;- observed_covariates[, prod(ipw_weight_trunc), by = .(id)]</code></pre>
+<p>We’ll then regress our observed outcome, <span class="math inline">\(Y\)</span>, on our treatment history, which we’ll break into terciles, following the way we generated our data above. Note here that until we regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(A\)</span>, we still are only focused on <span class="math inline">\(A\)</span>, <span class="math inline">\(Y\)</span> does not enter into our estimation at all.</p>
+<pre class="r"><code># getting cutpoints for terciles
+cut_values &lt;- quantile(observed_covariates$treatment, probs = c(.33, .67))
+
+observed_covariates[,`:=`(
+  treatment_low = ifelse(treatment &lt; cut_values[1], 1, 0),
+  treatment_mid = ifelse(treatment &gt;= cut_values[1] &amp; 
+      treatment &lt; cut_values[2], 1, 0),
+  treatment_high = ifelse(treatment &gt;= cut_values[2], 1, 0)
+)]
+
+treatment_history &lt;- dcast.data.table(observed_covariates, id ~ time, value.var = c(&quot;treatment_low&quot;, &quot;treatment_mid&quot;, &quot;treatment_high&quot;))</code></pre>
+<p>This is a <strong>wide</strong> dataset. We only observe <span class="math inline">\(Y\)</span> at the “end” of the treatment history, however, we have an entire sequence of treatments <span class="math inline">\(A\)</span> we regress <span class="math inline">\(Y\)</span> on. We’ll now regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(A\)</span>, the treatment history, and include the weights in the <code>weights</code> argument of <code>lm()</code>. We’ll treat the lowest tercile of <span class="math inline">\(A\)</span> as the default, and include the “mid” and “high” terciles in the model. To include our inverse probability of treatment weights, we’ll use the <code>survey</code> package.</p>
+<pre class="r"><code>treatment_history[, Y := final_data$Y]
+treatment_history[, Y_pois := final_data$Y_pois]
+
+treatment_history[, ipw_weights := ids_weights$V1]
+
+library(survey)
+
+design1 &lt;- survey::svydesign(ids = ~factor(id), 
+    data = treatment_history, weights = ~ (ipw_weights))
+
+m3 &lt;- survey::svyglm(Y_pois ~ treatment_mid_1 + treatment_mid_2 + treatment_mid_3 + treatment_high_1 + treatment_high_2 + treatment_high_3,  design = design1, family=quasipoisson())
+summary(m3)</code></pre>
+<pre><code>## 
+## Call:
+## svyglm(formula = Y_pois ~ treatment_mid_1 + treatment_mid_2 + 
+##     treatment_mid_3 + treatment_high_1 + treatment_high_2 + treatment_high_3, 
+##     design = design1, family = quasipoisson())
+## 
+## Survey design:
+## survey::svydesign(ids = ~factor(id), data = treatment_history, 
+##     weights = ~(ipw_weights))
+## 
+## Coefficients: (1 not defined because of singularities)
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       -1.7647     0.5092  -3.466 0.000552 ***
+## treatment_mid_1   -3.9502     0.6039  -6.542 9.72e-11 ***
+## treatment_mid_2    0.3124     1.2219   0.256 0.798279    
+## treatment_mid_3   -2.3257     1.0303  -2.257 0.024199 *  
+## treatment_high_2   3.5822     1.4122   2.537 0.011343 *  
+## treatment_high_3   1.8727     1.4438   1.297 0.194900    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for quasipoisson family taken to be 42.8374)
+## 
+## Number of Fisher Scoring iterations: 7</code></pre>
+<p>To examine how well our models perform, I calculate the mean squared error of the difference between the true coefficients, and the estimated coefficients.</p>
+<pre class="r"><code># Mean squared error on coefficients from the naive treatment regression, and
+# the ipw-weighted regression
+
+true_coef &lt;- outcome_beta[c(1:4, 6:7)]
+m2_coef &lt;- coef(m2)[c(1:4, 6:7)]
+m3_coef &lt;- na.omit(coef(m3))
+mean((true_coef - m2_coef)^2)</code></pre>
+<pre><code>## [1] 6.400712</code></pre>
+<pre class="r"><code>mean((true_coef - m3_coef)^2)</code></pre>
+<pre><code>## [1] 5.856875</code></pre>
+<p>While this isn’t perfect, it is much better than our naive model, which only regresses treatments on the outcome.</p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>In this post, I illustrated how to estimate marginal structural models with a continuous treatment, and a count-valued outcome. I simulated the treatment regime, generated an outcome, and then, estimated marginal structual models from the original data. If this method seems interesting to you, I would encourage you to check out any of the previously cited works, or <span class="citation">Blackwell and Glynn (2018)</span>.</p>
+</div>
+<div id="bibliography" class="section level1 unnumbered">
+<h1>Bibliography</h1>
+<div id="refs" class="references">
+<div id="ref-austin2018assessing">
+<p>Austin, Peter C. 2018. “Assessing the Performance of the Generalized Propensity Score for Estimating the Effect of Quantitative or Continuous Exposures on Binary Outcomes.” <em>Statistics in Medicine</em> 37 (11). Wiley Online Library: 1874–94.</p>
+</div>
+<div id="ref-blackwell2018make">
+<p>Blackwell, Matthew, and Adam Glynn. 2018. “How to Make Causal Inferences with Time-Series Cross-Sectional Data Under Selection on Observables.”</p>
+</div>
+<div id="ref-havercroft2012simulating">
+<p>Havercroft, W.G., and V. Didelez. 2012. “Simulating from Marginal Structural Models with Time-Dependent Confounding.” <em>Statistics in Medicine</em> 31 (30). Wiley Online Library: 4190–4206.</p>
+</div>
+<div id="ref-hirano2004propensity">
+<p>Hirano, Keisuke, and Guido W. Imbens. 2004. “The Propensity Score with Continuous Treatments.” <em>Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives</em> 226164: 73–84.</p>
+</div>
+<div id="ref-robins2000marginal">
+<p>Robins, James M., Miguel Angel Hernan, and Babette Brumback. 2000. “Marginal Structural Models and Causal Inference in Epidemiology.” <em>Epidemiology</em> 11 (5).</p>
+</div>
+<div id="ref-zhang2016causal">
+<p>Zhang, Zhiwei, Jie Zhou, Weihua Cao, and Jun Zhang. 2016. “Causal Inference with a Quantitative Exposure.” <em>Statistical Methods in Medical Research</em> 25 (1). SAGE Publications Sage UK: London, England: 315–35.</p>
+</div>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/adamlauretig.github.io/tags/causal-inference/">Causal Inference</a>
+  
+</div>
+
+
+
+
+    
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/adamlauretig.github.io/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+
+  </body>
+</html>
+
