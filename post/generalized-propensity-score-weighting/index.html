@@ -17,7 +17,8 @@
       
     
   
-  <meta name="description" content="Introduction I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment \(A\) at time \(t\) as \(A_{t}\), and covariates \(X\) for individual \(i\) at time \(t\) as \(X_{i,t}\). We are interested in the average treatment effect \(Y_{A = 1} - Y_{A = 0}\) in normal causal inference questions, however, in this case, because \(A\) is continuous and we’re interested in the history of treatment on our outcome \(Y\), inference is a little more difficult.">
+  <meta name="description" content="Generalized Propensity Score Weighting Adam Lauretig 2018-11-03
+ Introduction I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment A at time t as At, and covariates X for individual i at time t as Xi, t.">
 
   
   <link rel="alternate" hreflang="en-us" href="/adamlauretig.github.io/post/generalized-propensity-score-weighting/">
@@ -79,7 +80,8 @@
   <meta property="og:site_name" content="Adam Lauretig&#39;s Professional Website">
   <meta property="og:url" content="/adamlauretig.github.io/post/generalized-propensity-score-weighting/">
   <meta property="og:title" content="Generalized Propensity Score Weighting | Adam Lauretig&#39;s Professional Website">
-  <meta property="og:description" content="Introduction I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment \(A\) at time \(t\) as \(A_{t}\), and covariates \(X\) for individual \(i\) at time \(t\) as \(X_{i,t}\). We are interested in the average treatment effect \(Y_{A = 1} - Y_{A = 0}\) in normal causal inference questions, however, in this case, because \(A\) is continuous and we’re interested in the history of treatment on our outcome \(Y\), inference is a little more difficult.">
+  <meta property="og:description" content="Generalized Propensity Score Weighting Adam Lauretig 2018-11-03
+ Introduction I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment A at time t as At, and covariates X for individual i at time t as Xi, t.">
   <meta property="og:locale" content="en-us">
   
   <meta property="article:published_time" content="2018-11-03T00:00:00&#43;00:00">
@@ -151,6 +153,25 @@
           <a href="/adamlauretig.github.io/#publications_selected">
             
             <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#posts">
+            
+            <span>Posts</span>
             
           </a>
         </li>
@@ -299,15 +320,19 @@
 
 
     <div class="article-style" itemprop="articleBody">
-      <div id="introduction" class="section level1">
+      <div id="generalized-propensity-score-weighting" class="section level1">
+<h1>Generalized Propensity Score Weighting</h1>
+<p>Adam Lauretig 2018-11-03</p>
+</div>
+<div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment <span class="math inline">\(A\)</span> at time <span class="math inline">\(t\)</span> as <span class="math inline">\(A_{t}\)</span>, and covariates <span class="math inline">\(X\)</span> for individual <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span> as <span class="math inline">\(X_{i,t}\)</span>. We are interested in the average treatment effect <span class="math inline">\(Y_{A = 1} - Y_{A = 0}\)</span> in normal causal inference questions, however, in this case, because <span class="math inline">\(A\)</span> is continuous and we’re interested in the history of treatment on our outcome <span class="math inline">\(Y\)</span>, inference is a little more difficult. Drawing on work examining the Generalized Propensity Score <span class="citation">(Hirano and Imbens 2004; Austin 2018)</span>, I simulate covariates, calculate inverse propensity score weights, and ultimately, estimate a reponse model.</p>
-<p>Marginal structural models were originally developed in epidemiology <span class="citation">(Robins, Hernan, and Brumback 2000)</span>, and present a way to estimate potential outcomes for an outcome whose counterfactual depends on treatment <em>history</em>, rather than simply a static treatment. Estimating the inverse probability of treatment weights is similar to other propensity score methods, however, these weights are then used to weight a second stage regression, where the outcome is regressed on the treatment history.</p>
+<p>I’m writing this gist to better understand both the generalized propensity score, and marginal structural models, and especially, their intersection. In this, the goal is to estimate how a real-valued treatment can be estimated and understood for a time varying effect. Here, I denote treatment <em>A</em> at time <em>t</em> as <em>A</em><sub><em>t</em></sub>, and covariates <em>X</em> for individual <em>i</em> at time <em>t</em> as <em>X</em><sub><em>i</em>, <em>t</em></sub>. We are interested in the average treatment effect <em>Y</em><sub><em>A</em> = 1</sub> − <em>Y</em><sub><em>A</em> = 0</sub> in normal causal inference questions, however, in this case, because <em>A</em> is continuous and we’re interested in the history of treatment on our outcome <em>Y</em>, inference is a little more difficult. Drawing on work examining the Generalized Propensity Score (Hirano and Imbens 2004; Austin 2018), I simulate covariates, calculate inverse propensity score weights, and ultimately, estimate a reponse model.</p>
+<p>Marginal structural models were originally developed in epidemiology (Robins, Hernan, and Brumback 2000), and present a way to estimate potential outcomes for an outcome whose counterfactual depends on treatment <em>history</em>, rather than simply a static treatment. Estimating the inverse probability of treatment weights is similar to other propensity score methods, however, these weights are then used to weight a second stage regression, where the outcome is regressed on the treatment history.</p>
 <p>This post assumes a knowledge of the Rubin Causal Model (“Potential Outcomes”), and the R package <code>data.table()</code>.</p>
 </div>
 <div id="setting-up-parameters-for-simulation" class="section level1">
 <h1>Setting up parameters for simulation</h1>
-<p>Here, I assume there are 3 covariates, 50 individuals, ten time periods, and a lag length of 1. That is, <span class="math inline">\(A_{t}|X_{t}, A_{t-1}, X_{t-1}\)</span> and <span class="math inline">\(X_{t}|X_{t-1}, A_{t-1}\)</span>. We’ll generate <span class="math inline">\(X\)</span> and <span class="math inline">\(A\)</span> in steps, for each of our 3 time periods, along with a constant unobserved confounder <span class="math inline">\(U\)</span> following <span class="citation">Havercroft and Didelez (2012)</span>. Since my interest here is in a continuous treatment, I’ll use OLS to generate <span class="math inline">\(A_{t}\)</span>, plus some Gaussian <span class="math inline">\(\epsilon \sim N(0, 1)\)</span> noise. The challege here comes from incorporating the lagged treatment as well, and how it affects <span class="math inline">\(X_{t}\)</span> and <span class="math inline">\(A_{t}\)</span>, which means that we have to calculate treatment values at each time <span class="math inline">\(t\)</span>.</p>
+<p>Here, I assume there are 3 covariates, 50 individuals, ten time periods, and a lag length of 1. That is, <em>A</em><sub><em>t</em></sub>|<em>X</em><sub><em>t</em></sub>, <em>A</em><sub><em>t</em> − 1</sub>, <em>X</em><sub><em>t</em> − 1</sub> and <em>X</em><sub><em>t</em></sub>|<em>X</em><sub><em>t</em> − 1</sub>, <em>A</em><sub><em>t</em> − 1</sub>. We’ll generate <em>X</em> and <em>A</em> in steps, for each of our 3 time periods, along with a constant unobserved confounder <em>U</em> following Havercroft and Didelez (2012). Since my interest here is in a continuous treatment, I’ll use OLS to generate <em>A</em><sub><em>t</em></sub>, plus some Gaussian <em>ϵ</em> ∼ <em>N</em>(0, 1) noise. The challege here comes from incorporating the lagged treatment as well, and how it affects <em>X</em><sub><em>t</em></sub> and <em>A</em><sub><em>t</em></sub>, which means that we have to calculate treatment values at each time <em>t</em>.</p>
 <pre class="r"><code>library(data.table)
 library(ggplot2)
 library(mgcv)
@@ -398,7 +423,7 @@ A3 &lt;- as.matrix(time_3_data[, c(3:5, 7:10)])%*% t(treatment_coefs) + eps
 time_3_data[, treatment := A3]
 
 covariates &lt;- rbindlist(list(time_1_data, time_2_data, time_3_data))</code></pre>
-<p>Now, we want to generate the outcome variable <span class="math inline">\(Y\)</span>. Since we have a continuous treatment <span class="math inline">\(A\)</span>, we divide the treatment into quantiles <span class="citation">(Austin 2018)</span>, and assign a treatment effect to each quantile. We then simulate our potential outcome for each combination of quantiles over time. Here, we’ll set up terciles, split at <span class="math inline">\(33\% \text{ and } 67\%\)</span>, assign treatment values, and generate our outcome. We’ll treat the treatment value below <span class="math inline">\(33\%\)</span> as the default. I’ve chosen to hard-code the coefficients for the outcome model here, but you could replace them with <code>rnorm()</code>. For personal reasons, I’m interested in the effect on a poisson-distributed outcome, however, as I provide the code here, feel free to modify.</p>
+<p>Now, we want to generate the outcome variable <em>Y</em>. Since we have a continuous treatment <em>A</em>, we divide the treatment into quantiles (Austin 2018), and assign a treatment effect to each quantile. We then simulate our potential outcome for each combination of quantiles over time. Here, we’ll set up terciles, split at 33% and 67%, assign treatment values, and generate our outcome. We’ll treat the treatment value below 33% as the default. I’ve chosen to hard-code the coefficients for the outcome model here, but you could replace them with <code>rnorm()</code>. For personal reasons, I’m interested in the effect on a poisson-distributed outcome, however, as I provide the code here, feel free to modify.</p>
 <pre class="r"><code>cutpoints &lt;- quantile(covariates$treatment, c(.33, .67))
 covariates[,`:=`(
   treatment_low = ifelse(treatment &lt; cutpoints[1], 1, 0),
@@ -504,11 +529,11 @@ summary(m2)</code></pre>
 ## AIC: 40113
 ## 
 ## Number of Fisher Scoring iterations: 7</code></pre>
-<p>and we see that our estimates in both cases of the treatment effects are quite different than <code>outcome_beta</code> above. I’ll also point out the <code>NA</code> for <code>treatment_high_1</code>, as there are no treatment values at time 1 which are in the top <span class="math inline">\(3^{rd}\)</span> tercile.</p>
+<p>and we see that our estimates in both cases of the treatment effects are quite different than <code>outcome_beta</code> above. I’ll also point out the <code>NA</code> for <code>treatment_high_1</code>, as there are no treatment values at time 1 which are in the top 3<sup>*r**d*</sup> tercile.</p>
 </div>
 <div id="weighting" class="section level1">
 <h1>Weighting</h1>
-<p>However, we can weight our models with the probability of treatment, which allows us to condition on the covariates which confound selection, throughout the treatment history, a technique originally developed in <span class="citation">(Robins, Hernan, and Brumback 2000)</span>. Here, I’m grabbing the <code>covariates</code> data.table from above, but only keeping those variables we would expect to see in the actual dataset (mostly because the format is easier initially). It’s important to note that throughout the process of estimating the weights, we do not work with our outcome <span class="math inline">\(Y\)</span>, right now, we’re interested in <span class="math inline">\(A_{t = 1}, A_{t = 2}, A_{t = 3}\)</span> and <span class="math inline">\(X_{t}\)</span> and <span class="math inline">\(X_{t-1}\)</span>.</p>
+<p>However, we can weight our models with the probability of treatment, which allows us to condition on the covariates which confound selection, throughout the treatment history, a technique originally developed in (Robins, Hernan, and Brumback 2000). Here, I’m grabbing the <code>covariates</code> data.table from above, but only keeping those variables we would expect to see in the actual dataset (mostly because the format is easier initially). It’s important to note that throughout the process of estimating the weights, we do not work with our outcome <em>Y</em>, right now, we’re interested in <em>A</em><sub><em>t</em> = 1</sub>, <em>A</em><sub><em>t</em> = 2</sub>, <em>A</em><sub><em>t</em> = 3</sub> and <em>X</em><sub><em>t</em></sub> and <em>X</em><sub><em>t</em> − 1</sub>.</p>
 <pre class="r"><code>observed_covariates &lt;- covariates[,.(id, time, V1, V2, V3, treatment)]
 # observed_covariates &lt;- observed_covariates[ id %in% sample_ids]
 head(observed_covariates)</code></pre>
@@ -520,7 +545,7 @@ head(observed_covariates)</code></pre>
 ## 5:  5    1 0.2455929 0.07894221 0.2261046 0.9730124
 ## 6:  6    1 2.9160902 1.19751095 1.2838997 4.0934380</code></pre>
 <pre class="r"><code>observed_covariates[, normalized_treatment := (treatment - mean(treatment))/sd(treatment) ]</code></pre>
-<p>Now, to make our weights. Following <span class="citation">(Austin 2018)</span>, we’ll perform OLS regression on our treatment, as our outcome is continuous. Then, for the denominator of our inverse propensity score weights, to calculate the probability of a particular treatment <span class="math inline">\(a^{*}\)</span>, we will calculate <span class="math inline">\(Pr(A = a|a^{*}, \sigma_{a^{*}})\)</span>. The stabilizing numerator is <span class="math inline">\(Pr(A^{*} = a^{*}|0, 1)\)</span> <span class="citation">(Z. Zhang et al. 2016)</span>. Here, we know that we need a single lag of our data to estimate the propensity scores. We then take the product of our stabilized weights from each time period, in order to produce individual-specific weights.</p>
+<p>Now, to make our weights. Following (Austin 2018), we’ll perform OLS regression on our treatment, as our outcome is continuous. Then, for the denominator of our inverse propensity score weights, to calculate the probability of a particular treatment <em>a</em><sup>*</sup>, we will calculate <em>P<strong>r<em>(</em>A<em> = </em>a<em>|</em>a<em><sup>*</sup>, </em>σ<em><sub></em>a<em><sup>*</sup></sub>). The stabilizing numerator is </em>P</strong>r</em>(<em>A</em><sup>*</sup> = <em>a</em><sup>*</sup>|0, 1) (Z. Zhang et al. 2016). Here, we know that we need a single lag of our data to estimate the propensity scores. We then take the product of our stabilized weights from each time period, in order to produce individual-specific weights.</p>
 <pre class="r"><code>observed_covariates_lag &lt;- as.data.table(observed_covariates)
 observed_covariates_lag[, time := time + 1]
 setnames(observed_covariates_lag, 
@@ -552,7 +577,7 @@ observed_covariates[, ipw_weight_trunc := ifelse(ipw_weight &lt; wt_cutpoints[1]
 observed_covariates[, ipw_weight_trunc := ifelse(ipw_weight &gt; wt_cutpoints[2], wt_cutpoints[2], ipw_weight)]
 # observed_covariates[, ipw_weight_trunc := ifelse(is.infinite(wt_cutpoints), wt_cutpoints[2], wt_cutpoints)]
 ids_weights &lt;- observed_covariates[, prod(ipw_weight_trunc), by = .(id)]</code></pre>
-<p>We’ll then regress our observed outcome, <span class="math inline">\(Y\)</span>, on our treatment history, which we’ll break into terciles, following the way we generated our data above. Note here that until we regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(A\)</span>, we still are only focused on <span class="math inline">\(A\)</span>, <span class="math inline">\(Y\)</span> does not enter into our estimation at all.</p>
+<p>We’ll then regress our observed outcome, <em>Y</em>, on our treatment history, which we’ll break into terciles, following the way we generated our data above. Note here that until we regress <em>Y</em> on <em>A</em>, we still are only focused on <em>A</em>, <em>Y</em> does not enter into our estimation at all.</p>
 <pre class="r"><code># getting cutpoints for terciles
 cut_values &lt;- quantile(observed_covariates$treatment, probs = c(.33, .67))
 
@@ -564,7 +589,7 @@ observed_covariates[,`:=`(
 )]
 
 treatment_history &lt;- dcast.data.table(observed_covariates, id ~ time, value.var = c(&quot;treatment_low&quot;, &quot;treatment_mid&quot;, &quot;treatment_high&quot;))</code></pre>
-<p>This is a <strong>wide</strong> dataset. We only observe <span class="math inline">\(Y\)</span> at the “end” of the treatment history, however, we have an entire sequence of treatments <span class="math inline">\(A\)</span> we regress <span class="math inline">\(Y\)</span> on. We’ll now regress <span class="math inline">\(Y\)</span> on <span class="math inline">\(A\)</span>, the treatment history, and include the weights in the <code>weights</code> argument of <code>lm()</code>. We’ll treat the lowest tercile of <span class="math inline">\(A\)</span> as the default, and include the “mid” and “high” terciles in the model. To include our inverse probability of treatment weights, we’ll use the <code>survey</code> package.</p>
+<p>This is a <strong>wide</strong> dataset. We only observe <em>Y</em> at the “end” of the treatment history, however, we have an entire sequence of treatments <em>A</em> we regress <em>Y</em> on. We’ll now regress <em>Y</em> on <em>A</em>, the treatment history, and include the weights in the <code>weights</code> argument of <code>lm()</code>. We’ll treat the lowest tercile of <em>A</em> as the default, and include the “mid” and “high” terciles in the model. To include our inverse probability of treatment weights, we’ll use the <code>survey</code> package.</p>
 <pre class="r"><code>treatment_history[, Y := final_data$Y]
 treatment_history[, Y_pois := final_data$Y_pois]
 
@@ -616,30 +641,16 @@ mean((true_coef - m2_coef)^2)</code></pre>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>In this post, I illustrated how to estimate marginal structural models with a continuous treatment, and a count-valued outcome. I simulated the treatment regime, generated an outcome, and then, estimated marginal structual models from the original data. If this method seems interesting to you, I would encourage you to check out any of the previously cited works, or <span class="citation">Blackwell and Glynn (2018)</span>.</p>
+<p>In this post, I illustrated how to estimate marginal structural models with a continuous treatment, and a count-valued outcome. I simulated the treatment regime, generated an outcome, and then, estimated marginal structual models from the original data. If this method seems interesting to you, I would encourage you to check out any of the previously cited works, or Blackwell and Glynn (2018).</p>
 </div>
-<div id="bibliography" class="section level1 unnumbered">
+<div id="bibliography" class="section level1">
 <h1>Bibliography</h1>
-<div id="refs" class="references">
-<div id="ref-austin2018assessing">
 <p>Austin, Peter C. 2018. “Assessing the Performance of the Generalized Propensity Score for Estimating the Effect of Quantitative or Continuous Exposures on Binary Outcomes.” <em>Statistics in Medicine</em> 37 (11). Wiley Online Library: 1874–94.</p>
-</div>
-<div id="ref-blackwell2018make">
 <p>Blackwell, Matthew, and Adam Glynn. 2018. “How to Make Causal Inferences with Time-Series Cross-Sectional Data Under Selection on Observables.”</p>
-</div>
-<div id="ref-havercroft2012simulating">
 <p>Havercroft, W.G., and V. Didelez. 2012. “Simulating from Marginal Structural Models with Time-Dependent Confounding.” <em>Statistics in Medicine</em> 31 (30). Wiley Online Library: 4190–4206.</p>
-</div>
-<div id="ref-hirano2004propensity">
 <p>Hirano, Keisuke, and Guido W. Imbens. 2004. “The Propensity Score with Continuous Treatments.” <em>Applied Bayesian Modeling and Causal Inference from Incomplete-Data Perspectives</em> 226164: 73–84.</p>
-</div>
-<div id="ref-robins2000marginal">
 <p>Robins, James M., Miguel Angel Hernan, and Babette Brumback. 2000. “Marginal Structural Models and Causal Inference in Epidemiology.” <em>Epidemiology</em> 11 (5).</p>
-</div>
-<div id="ref-zhang2016causal">
 <p>Zhang, Zhiwei, Jie Zhou, Weihua Cao, and Jun Zhang. 2016. “Causal Inference with a Quantitative Exposure.” <em>Statistical Methods in Medical Research</em> 25 (1). SAGE Publications Sage UK: London, England: 315–35.</p>
-</div>
-</div>
 </div>
 
     </div>
