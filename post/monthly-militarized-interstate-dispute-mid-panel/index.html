@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.42.1" />
+  <meta name="author" content="Adam Lauretig">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="Just a brief note. For my dissertation, I needed to create a monthly panel of militarized interstate dispute (MID) data, which proved to be more difficult than initially anticipated. To “be kind to my future self,” I wrote up what I did on a gist, and I’ll also copy the code below. If you find yourself in a similar situation, I hope this helps!
+# Code to create a monthly, directed dyadic panel of # Militarized Interstate Dispute data, with directional initiation # uses cshapes to create monthly list of all dyads, then uses data.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#EF525B">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+      
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+      
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/adamlauretig.github.io/styles.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  <link rel="feed" href="/adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  
+
+  <link rel="manifest" href="/adamlauretig.github.io/site.webmanifest">
+  <link rel="icon" type="image/png" href="/adamlauretig.github.io/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/adamlauretig.github.io/img/icon-192.png">
+
+  <link rel="canonical" href="/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@adamlauretig">
+  <meta property="twitter:creator" content="@adamlauretig">
+  
+  <meta property="og:site_name" content="Adam Lauretig&#39;s Professional Website">
+  <meta property="og:url" content="/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/">
+  <meta property="og:title" content="Monthly Militarized Interstate Dispute (MID) Panel  | Adam Lauretig&#39;s Professional Website">
+  <meta property="og:description" content="Just a brief note. For my dissertation, I needed to create a monthly panel of militarized interstate dispute (MID) data, which proved to be more difficult than initially anticipated. To “be kind to my future self,” I wrote up what I did on a gist, and I’ll also copy the code below. If you find yourself in a similar situation, I hope this helps!
+# Code to create a monthly, directed dyadic panel of # Militarized Interstate Dispute data, with directional initiation # uses cshapes to create monthly list of all dyads, then uses data.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2019-01-31T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2019-01-31T00:00:00&#43;00:00">
+  
+
+  
+  
+
+  <title>Monthly Militarized Interstate Dispute (MID) Panel  | Adam Lauretig&#39;s Professional Website</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/adamlauretig.github.io/">Adam Lauretig&#39;s Professional Website</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Monthly Militarized Interstate Dispute (MID) Panel </h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2019-01-31 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Jan 31, 2019
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Adam Lauretig">
+  </span>
+
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="/adamlauretig.github.io/categories/data-cleaning/">Data Cleaning</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Monthly%20Militarized%20Interstate%20Dispute%20%28MID%29%20Panel%20&amp;url=%2fadamlauretig.github.io%2fpost%2fmonthly-militarized-interstate-dispute-mid-panel%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fadamlauretig.github.io%2fpost%2fmonthly-militarized-interstate-dispute-mid-panel%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fadamlauretig.github.io%2fpost%2fmonthly-militarized-interstate-dispute-mid-panel%2f&amp;title=Monthly%20Militarized%20Interstate%20Dispute%20%28MID%29%20Panel%20"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fadamlauretig.github.io%2fpost%2fmonthly-militarized-interstate-dispute-mid-panel%2f&amp;title=Monthly%20Militarized%20Interstate%20Dispute%20%28MID%29%20Panel%20"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Monthly%20Militarized%20Interstate%20Dispute%20%28MID%29%20Panel%20&amp;body=%2fadamlauretig.github.io%2fpost%2fmonthly-militarized-interstate-dispute-mid-panel%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <p>Just a brief note. For my dissertation, I needed to create a monthly panel of militarized interstate dispute (MID) data, which proved to be more difficult than initially anticipated. To “be kind to my future self,” I wrote up what I did on a <a href="https://gist.github.com/adamlauretig/ce536aefe21523e2757ee4f261242b0c">gist</a>, and I’ll also copy the code below. If you find yourself in a similar situation, I hope this helps!</p>
+<pre class="r"><code># Code to create a monthly, directed dyadic panel of 
+# Militarized Interstate Dispute data, with directional initiation
+# uses cshapes to create monthly list of all dyads, then uses data.table
+# to transform MIDS to a monthly panel and then merge
+
+# Code by Adam Lauretig, 2019
+# website: adamlauretig.github.io
+
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+seed_to_use &lt;- 216
+set.seed(seed_to_use)
+library(data.table)
+library(parallel)
+library(cshapes)
+load(&quot;master_dyads_1946_1980.rdata&quot;) 
+# for code to create this, see appendix at bottom
+setDT(master_dyads)
+# revised MID data from http://svmiller.com/gml-mid-data/
+mids &lt;- fread(&quot;gml-ddy-2.1.csv&quot;)
+
+# gets dispute start days ----
+mida &lt;- fread(&quot;gml-mida-2.1.csv&quot;)
+mida &lt;- mida[,.(
+  dispnum3, stday, stmon, styear, endday, endmon, endyear, fatality, hostlev)]
+mida &lt;- mida[ styear &gt; 1945 &amp; styear &lt; 1981]
+
+# use &quot;sprintf&quot; to make sure all days/months preserve the leading zero 
+mida[, stmon := sprintf(&quot;%02s&quot;, stmon)]
+mida[, stday := sprintf(&quot;%02s&quot;, stday)]
+mida[, endmon := sprintf(&quot;%02s&quot;, endmon)]
+mida[, endday := sprintf(&quot;%02s&quot;, endday)]
+mida[, `:=`(endday = ifelse(endday == &quot;-9&quot;, &quot;01&quot;, endday), 
+  stday = ifelse(stday == &quot;-9&quot;, &quot;01&quot;, stday))]
+
+# working w/mids ----
+# year range of interest
+mids &lt;- mids[ year &gt; 1945 &amp; year &lt; 1981]
+mids[, fatal_mid := as.numeric(!(is.na(fatality)) &amp; fatality &gt; 0) ]
+mids_sub &lt;- mids[,.(year, ccode1, ccode2, hostlev, sidea1, sidea2, dispnum)]
+
+# merge dispute data with dyad data ----
+mid_data &lt;- merge(
+  mids_sub, mida, by.x = c(&quot;dispnum&quot;), by.y = c(&quot;dispnum3&quot;), all.x = TRUE)
+# since we&#39;re working w/months, set all start dates to &quot;YYYY-MM-01&quot;
+mid_data[, start_date := paste0(styear, &quot;-&quot;, stmon, &quot;-&quot;, &quot;01&quot;)]
+mid_data[, end_date := paste0(endyear, &quot;-&quot;, endmon, &quot;-&quot;, &quot;01&quot;)]
+# clear out some unneeded columns
+mid_data[, `:=`(stday = NULL, stmon = NULL, styear = NULL, endday = NULL, 
+  endmon = NULL, endyear = NULL, hostlev.y = NULL)]
+# here, we only want to look at valid disputes, we&#39;re removing any odd ducks
+disputes &lt;- mid_data[ !(is.na(dispnum))]
+disputes &lt;- disputes[ !(is.na(fatality)) ]
+dispute_nums &lt;- unique(disputes$dispnum)
+
+
+# take the &quot;from&quot; and &quot;to&quot; columns, and create a monthly panel, and 
+# code onsets and initiations. returns a data.table
+make_monthly_mid &lt;- function(i, dispute_dt = disputes){
+  disp &lt;- dispute_nums[i]
+  tmp &lt;- dispute_dt[ dispnum == disp ]
+  tmp2 &lt;- tmp[ , list(month = seq(as.Date(start_date[1]), 
+    as.Date(end_date[1]), by = &quot;month&quot;)), 
+    by = .(dispnum, ccode1, ccode2, hostlev.x, sidea1, sidea2, fatality)]
+  tmp2[, onset := ifelse(month == min(month), 1, 0)]
+  tmp2[, onset_na := ifelse(month == min(month), 1, NA)]
+  tmp2[, init := ifelse(onset == 1 &amp; sidea1 == 1, 1, 0)]
+  tmp2[, init_na := ifelse(onset == 1 &amp; sidea1 == 1, 1, NA)]
+
+return(tmp2)
+  
+}
+
+# merging and cleaning mids to dyads
+monthly_mid_list &lt;- mclapply(1:length(dispute_nums), make_monthly_mid, 
+  dispute_dt = disputes, mc.cores = 8)
+monthly_mids &lt;- rbindlist(monthly_mid_list)
+master_mids &lt;- merge(master_dyads, monthly_mids, 
+  by.x = c(&quot;ccode1&quot;, &quot;ccode2&quot;, &quot;year&quot;), by.y = c(&quot;ccode1&quot;, &quot;ccode2&quot;, &quot;month&quot;), 
+  all = TRUE) # since we can have multiple mids per year, set all = TRUE
+master_mids[, `:=`(
+  hostlev.x = ifelse(is.na(hostlev.x), 0, hostlev.x),
+  fatality = ifelse(is.na(fatality), 0, fatality),
+  onset = ifelse(is.na(onset), 0, onset),
+  onset_na = ifelse(is.na(onset_na) &amp; is.na(dispnum), 0, onset_na),
+  init = ifelse(is.na(init), 0, init),
+  init_na = ifelse(is.na(init_na) &amp; is.na(dispnum), 0, init_na)
+  )]
+test &lt;- master_mids[,.N, by = .(ccode1, ccode2, year)]
+save(master_mids, file = &quot;master_mids.rdata&quot;)
+
+
+# Appendix ----
+# create all dyad months
+# this tooks about 20 minutes with 8 cores, as a heads up
+years &lt;- seq.Date(from = as.Date(&quot;1946-01-01&quot;), to = as.Date(&quot;1980-12-31&quot;), by = &quot;month&quot;)
+dl &lt;- distlist(as.Date(&quot;1946-01-01&quot;), type=&quot;capdist&quot;, useGW=FALSE)
+dl2 &lt;- dl[ (dl$ccode1 != dl$ccode2), ]
+make_dyads &lt;- function(i){
+  dyad_year &lt;- years[i]
+  dl &lt;- distlist(dyad_year, type=&quot;capdist&quot;, useGW=FALSE)
+  dl2 &lt;- dl[ (dl$ccode1 != dl$ccode2), ]
+  dl2$capdist &lt;- NULL
+  dl2$year &lt;- dyad_year
+  dl2
+}
+master_dyads &lt;- do.call(rbind, mclapply(1:length(years), make_dyads, mc.cores = 8))
+# save(master_dyads, file = &quot;~/Dropbox/Dissertation_data/master_dyads_1946_1980.rdata&quot;)</code></pre>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="/adamlauretig.github.io/tags/data-cleaning/">Data Cleaning</a>
+  
+</div>
+
+
+
+
+    
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/adamlauretig.github.io/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+
+  </body>
+</html>
+

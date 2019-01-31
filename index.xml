@@ -11,6 +11,124 @@
     <atom:link href="/adamlauretig.github.io/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Monthly Militarized Interstate Dispute (MID) Panel </title>
+      <link>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</link>
+      <pubDate>Thu, 31 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</guid>
+      <description>&lt;p&gt;Just a brief note. For my dissertation, I needed to create a monthly panel of militarized interstate dispute (MID) data, which proved to be more difficult than initially anticipated. To “be kind to my future self,” I wrote up what I did on a &lt;a href=&#34;https://gist.github.com/adamlauretig/ce536aefe21523e2757ee4f261242b0c&#34;&gt;gist&lt;/a&gt;, and I’ll also copy the code below. If you find yourself in a similar situation, I hope this helps!&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Code to create a monthly, directed dyadic panel of 
+# Militarized Interstate Dispute data, with directional initiation
+# uses cshapes to create monthly list of all dyads, then uses data.table
+# to transform MIDS to a monthly panel and then merge
+
+# Code by Adam Lauretig, 2019
+# website: adamlauretig.github.io
+
+rm(list = ls())
+options(stringsAsFactors = FALSE)
+seed_to_use &amp;lt;- 216
+set.seed(seed_to_use)
+library(data.table)
+library(parallel)
+library(cshapes)
+load(&amp;quot;master_dyads_1946_1980.rdata&amp;quot;) 
+# for code to create this, see appendix at bottom
+setDT(master_dyads)
+# revised MID data from http://svmiller.com/gml-mid-data/
+mids &amp;lt;- fread(&amp;quot;gml-ddy-2.1.csv&amp;quot;)
+
+# gets dispute start days ----
+mida &amp;lt;- fread(&amp;quot;gml-mida-2.1.csv&amp;quot;)
+mida &amp;lt;- mida[,.(
+  dispnum3, stday, stmon, styear, endday, endmon, endyear, fatality, hostlev)]
+mida &amp;lt;- mida[ styear &amp;gt; 1945 &amp;amp; styear &amp;lt; 1981]
+
+# use &amp;quot;sprintf&amp;quot; to make sure all days/months preserve the leading zero 
+mida[, stmon := sprintf(&amp;quot;%02s&amp;quot;, stmon)]
+mida[, stday := sprintf(&amp;quot;%02s&amp;quot;, stday)]
+mida[, endmon := sprintf(&amp;quot;%02s&amp;quot;, endmon)]
+mida[, endday := sprintf(&amp;quot;%02s&amp;quot;, endday)]
+mida[, `:=`(endday = ifelse(endday == &amp;quot;-9&amp;quot;, &amp;quot;01&amp;quot;, endday), 
+  stday = ifelse(stday == &amp;quot;-9&amp;quot;, &amp;quot;01&amp;quot;, stday))]
+
+# working w/mids ----
+# year range of interest
+mids &amp;lt;- mids[ year &amp;gt; 1945 &amp;amp; year &amp;lt; 1981]
+mids[, fatal_mid := as.numeric(!(is.na(fatality)) &amp;amp; fatality &amp;gt; 0) ]
+mids_sub &amp;lt;- mids[,.(year, ccode1, ccode2, hostlev, sidea1, sidea2, dispnum)]
+
+# merge dispute data with dyad data ----
+mid_data &amp;lt;- merge(
+  mids_sub, mida, by.x = c(&amp;quot;dispnum&amp;quot;), by.y = c(&amp;quot;dispnum3&amp;quot;), all.x = TRUE)
+# since we&amp;#39;re working w/months, set all start dates to &amp;quot;YYYY-MM-01&amp;quot;
+mid_data[, start_date := paste0(styear, &amp;quot;-&amp;quot;, stmon, &amp;quot;-&amp;quot;, &amp;quot;01&amp;quot;)]
+mid_data[, end_date := paste0(endyear, &amp;quot;-&amp;quot;, endmon, &amp;quot;-&amp;quot;, &amp;quot;01&amp;quot;)]
+# clear out some unneeded columns
+mid_data[, `:=`(stday = NULL, stmon = NULL, styear = NULL, endday = NULL, 
+  endmon = NULL, endyear = NULL, hostlev.y = NULL)]
+# here, we only want to look at valid disputes, we&amp;#39;re removing any odd ducks
+disputes &amp;lt;- mid_data[ !(is.na(dispnum))]
+disputes &amp;lt;- disputes[ !(is.na(fatality)) ]
+dispute_nums &amp;lt;- unique(disputes$dispnum)
+
+
+# take the &amp;quot;from&amp;quot; and &amp;quot;to&amp;quot; columns, and create a monthly panel, and 
+# code onsets and initiations. returns a data.table
+make_monthly_mid &amp;lt;- function(i, dispute_dt = disputes){
+  disp &amp;lt;- dispute_nums[i]
+  tmp &amp;lt;- dispute_dt[ dispnum == disp ]
+  tmp2 &amp;lt;- tmp[ , list(month = seq(as.Date(start_date[1]), 
+    as.Date(end_date[1]), by = &amp;quot;month&amp;quot;)), 
+    by = .(dispnum, ccode1, ccode2, hostlev.x, sidea1, sidea2, fatality)]
+  tmp2[, onset := ifelse(month == min(month), 1, 0)]
+  tmp2[, onset_na := ifelse(month == min(month), 1, NA)]
+  tmp2[, init := ifelse(onset == 1 &amp;amp; sidea1 == 1, 1, 0)]
+  tmp2[, init_na := ifelse(onset == 1 &amp;amp; sidea1 == 1, 1, NA)]
+
+return(tmp2)
+  
+}
+
+# merging and cleaning mids to dyads
+monthly_mid_list &amp;lt;- mclapply(1:length(dispute_nums), make_monthly_mid, 
+  dispute_dt = disputes, mc.cores = 8)
+monthly_mids &amp;lt;- rbindlist(monthly_mid_list)
+master_mids &amp;lt;- merge(master_dyads, monthly_mids, 
+  by.x = c(&amp;quot;ccode1&amp;quot;, &amp;quot;ccode2&amp;quot;, &amp;quot;year&amp;quot;), by.y = c(&amp;quot;ccode1&amp;quot;, &amp;quot;ccode2&amp;quot;, &amp;quot;month&amp;quot;), 
+  all = TRUE) # since we can have multiple mids per year, set all = TRUE
+master_mids[, `:=`(
+  hostlev.x = ifelse(is.na(hostlev.x), 0, hostlev.x),
+  fatality = ifelse(is.na(fatality), 0, fatality),
+  onset = ifelse(is.na(onset), 0, onset),
+  onset_na = ifelse(is.na(onset_na) &amp;amp; is.na(dispnum), 0, onset_na),
+  init = ifelse(is.na(init), 0, init),
+  init_na = ifelse(is.na(init_na) &amp;amp; is.na(dispnum), 0, init_na)
+  )]
+test &amp;lt;- master_mids[,.N, by = .(ccode1, ccode2, year)]
+save(master_mids, file = &amp;quot;master_mids.rdata&amp;quot;)
+
+
+# Appendix ----
+# create all dyad months
+# this tooks about 20 minutes with 8 cores, as a heads up
+years &amp;lt;- seq.Date(from = as.Date(&amp;quot;1946-01-01&amp;quot;), to = as.Date(&amp;quot;1980-12-31&amp;quot;), by = &amp;quot;month&amp;quot;)
+dl &amp;lt;- distlist(as.Date(&amp;quot;1946-01-01&amp;quot;), type=&amp;quot;capdist&amp;quot;, useGW=FALSE)
+dl2 &amp;lt;- dl[ (dl$ccode1 != dl$ccode2), ]
+make_dyads &amp;lt;- function(i){
+  dyad_year &amp;lt;- years[i]
+  dl &amp;lt;- distlist(dyad_year, type=&amp;quot;capdist&amp;quot;, useGW=FALSE)
+  dl2 &amp;lt;- dl[ (dl$ccode1 != dl$ccode2), ]
+  dl2$capdist &amp;lt;- NULL
+  dl2$year &amp;lt;- dyad_year
+  dl2
+}
+master_dyads &amp;lt;- do.call(rbind, mclapply(1:length(years), make_dyads, mc.cores = 8))
+# save(master_dyads, file = &amp;quot;~/Dropbox/Dissertation_data/master_dyads_1946_1980.rdata&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Generalized Propensity Score Weighting</title>
       <link>/adamlauretig.github.io/post/generalized-propensity-score-weighting/</link>
       <pubDate>Sat, 03 Nov 2018 00:00:00 +0000</pubDate>
