@@ -18,8 +18,11 @@
       <guid>/adamlauretig.github.io/post/tokenizing-on-stopwords/</guid>
       <description>&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Introduction&lt;/h1&gt;
-&lt;p&gt;Recently, I came across &lt;a href=&#34;https://github.com/dperezrada/evidence-tools/tree/master/nlp/keywords2vec&#34;&gt;the idea&lt;/a&gt; that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via &lt;a href=&#34;https://twitter.com/jeremyphoward/status/1094025901371621376&#34;&gt;link&lt;/a&gt;). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.&lt;/p&gt;
-&lt;p&gt;A brief note: “tokenizing” refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and “end-of-sentence” punctuation (ex: “!, ?, .”). This would then return a list of words, or “unigrams.” These can then be re-combined into &lt;em&gt;n-grams&lt;/em&gt;, or multiword phrases. # An R Implementation&lt;/p&gt;
+&lt;p&gt;Recently, I came across &lt;a href=&#34;https://github.com/dperezrada/evidence-tools/tree/master/nlp/keywords2vec&#34;&gt;the idea&lt;/a&gt; that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found &lt;a href=&#34;https://twitter.com/jeremyphoward/status/1094025901371621376&#34;&gt;via&lt;/a&gt;). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.&lt;/p&gt;
+&lt;p&gt;A brief note: “tokenizing” refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and “end-of-sentence” punctuation (ex: “!, ?, .”). This would then return a list of words, or “unigrams.” These can then be re-combined into &lt;em&gt;n-grams&lt;/em&gt;, or multiword phrases.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;an-r-implementation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;An R Implementation&lt;/h1&gt;
 &lt;p&gt;The code in the linked repo was all in Python, but, like many political scientists, I’m more comfortable in R. (This is not a statement on the relative merits of each language, simply my own comfort level. Please, no language wars here!). I was curious whether it would be possible to implement this approach in R.&lt;/p&gt;
 &lt;p&gt;My first thought was to use the amazing &lt;em&gt;quanteda&lt;/em&gt; package, and I &lt;a href=&#34;https://github.com/quanteda/quanteda/issues/1600&#34;&gt;asked&lt;/a&gt; the maintainers about this approach. &lt;a href=&#34;https://github.com/kbenoit&#34;&gt;Ken Benoit&lt;/a&gt; had some helpful suggestions, as well as a nice discussion about the &lt;em&gt;quanteda&lt;/em&gt; design philosophy. This approach first tokenizes the corpus, removes stopwords, creates phrases from the remaining words, and finally, recombines them with the original &lt;em&gt;tokens&lt;/em&gt; object. This object can then be used in word2vec or other approaches.&lt;/p&gt;
 &lt;p&gt;Here, I test the approach on the US presidential inauagural addresses corpus in &lt;em&gt;quanteda&lt;/em&gt;. I like this corpus because it’s small enough that computation is quick, and there is enough thematic structure that human inspection can tell if the results “make sense.”&lt;/p&gt;
@@ -112,18 +115,18 @@ closest_vector &amp;lt;- function(vec1, mat1){
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##      united_states       constitution general_government 
-##          1.0000000          0.9207115          0.8979772 
-##            several          executive        legislative 
-##          0.8862262          0.8831764          0.8811066 
-##              under        enforcement     accountability 
-##          0.8779370          0.8757026          0.8742267 
-##          functions 
-##          0.8727625&lt;/code&gt;&lt;/pre&gt;
+##          1.0000000          0.9355995          0.9210637 
+##        legislative     accountability            several 
+##          0.9012720          0.8822275          0.8714877 
+##          functions              under           congress 
+##          0.8665779          0.8595051          0.8582047 
+##          executive 
+##          0.8573942&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  americans   problems       sick one_nation  democracy determined 
-##  1.0000000  0.9537905  0.9315250  0.9282612  0.9257370  0.9157967 
-##       pain       heal      image     vision 
-##  0.9149906  0.9128685  0.9108324  0.9096239&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## americans democracy    vision  problems   upon_us       old        up 
+## 1.0000000 0.9356345 0.9188319 0.9054188 0.9015402 0.9010827 0.8972994 
+##      down     quiet      fire 
+## 0.8909143 0.8896028 0.8861505&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>

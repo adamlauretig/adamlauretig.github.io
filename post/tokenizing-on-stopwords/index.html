@@ -17,7 +17,7 @@
       
     
   
-  <meta name="description" content="Introduction Recently, I came across the idea that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via link). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.
+  <meta name="description" content="Introduction Recently, I came across the idea that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.
 A brief note: “tokenizing” refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and “end-of-sentence” punctuation (ex: “!">
 
   
@@ -80,7 +80,7 @@ A brief note: “tokenizing” refers to splitting a document into words or phra
   <meta property="og:site_name" content="Adam Lauretig&#39;s Professional Website">
   <meta property="og:url" content="/adamlauretig.github.io/post/tokenizing-on-stopwords/">
   <meta property="og:title" content="Tokenizing on Stopwords | Adam Lauretig&#39;s Professional Website">
-  <meta property="og:description" content="Introduction Recently, I came across the idea that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via link). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.
+  <meta property="og:description" content="Introduction Recently, I came across the idea that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.
 A brief note: “tokenizing” refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and “end-of-sentence” punctuation (ex: “!">
   <meta property="og:locale" content="en-us">
   
@@ -317,8 +317,11 @@ A brief note: “tokenizing” refers to splitting a document into words or phra
     <div class="article-style" itemprop="articleBody">
       <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Recently, I came across <a href="https://github.com/dperezrada/evidence-tools/tree/master/nlp/keywords2vec">the idea</a> that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via <a href="https://twitter.com/jeremyphoward/status/1094025901371621376">link</a>). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.</p>
-<p>A brief note: “tokenizing” refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and “end-of-sentence” punctuation (ex: “!, ?, .”). This would then return a list of words, or “unigrams.” These can then be re-combined into <em>n-grams</em>, or multiword phrases. # An R Implementation</p>
+<p>Recently, I came across <a href="https://github.com/dperezrada/evidence-tools/tree/master/nlp/keywords2vec">the idea</a> that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found <a href="https://twitter.com/jeremyphoward/status/1094025901371621376">via</a>). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.</p>
+<p>A brief note: “tokenizing” refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and “end-of-sentence” punctuation (ex: “!, ?, .”). This would then return a list of words, or “unigrams.” These can then be re-combined into <em>n-grams</em>, or multiword phrases.</p>
+</div>
+<div id="an-r-implementation" class="section level1">
+<h1>An R Implementation</h1>
 <p>The code in the linked repo was all in Python, but, like many political scientists, I’m more comfortable in R. (This is not a statement on the relative merits of each language, simply my own comfort level. Please, no language wars here!). I was curious whether it would be possible to implement this approach in R.</p>
 <p>My first thought was to use the amazing <em>quanteda</em> package, and I <a href="https://github.com/quanteda/quanteda/issues/1600">asked</a> the maintainers about this approach. <a href="https://github.com/kbenoit">Ken Benoit</a> had some helpful suggestions, as well as a nice discussion about the <em>quanteda</em> design philosophy. This approach first tokenizes the corpus, removes stopwords, creates phrases from the remaining words, and finally, recombines them with the original <em>tokens</em> object. This object can then be used in word2vec or other approaches.</p>
 <p>Here, I test the approach on the US presidential inauagural addresses corpus in <em>quanteda</em>. I like this corpus because it’s small enough that computation is quick, and there is enough thematic structure that human inspection can tell if the results “make sense.”</p>
@@ -411,18 +414,18 @@ closest_vector &lt;- function(vec1, mat1){
 
 closest_vector(embeds[&quot;united_states&quot;, ], embeds)</code></pre>
 <pre><code>##      united_states       constitution general_government 
-##          1.0000000          0.9207115          0.8979772 
-##            several          executive        legislative 
-##          0.8862262          0.8831764          0.8811066 
-##              under        enforcement     accountability 
-##          0.8779370          0.8757026          0.8742267 
-##          functions 
-##          0.8727625</code></pre>
+##          1.0000000          0.9355995          0.9210637 
+##        legislative     accountability            several 
+##          0.9012720          0.8822275          0.8714877 
+##          functions              under           congress 
+##          0.8665779          0.8595051          0.8582047 
+##          executive 
+##          0.8573942</code></pre>
 <pre class="r"><code>closest_vector(embeds[&quot;americans&quot;, ], embeds)</code></pre>
-<pre><code>##  americans   problems       sick one_nation  democracy determined 
-##  1.0000000  0.9537905  0.9315250  0.9282612  0.9257370  0.9157967 
-##       pain       heal      image     vision 
-##  0.9149906  0.9128685  0.9108324  0.9096239</code></pre>
+<pre><code>## americans democracy    vision  problems   upon_us       old        up 
+## 1.0000000 0.9356345 0.9188319 0.9054188 0.9015402 0.9010827 0.8972994 
+##      down     quiet      fire 
+## 0.8909143 0.8896028 0.8861505</code></pre>
 <p>Not bad for an initial analysis!</p>
 </div>
 
