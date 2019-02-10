@@ -2,20 +2,20 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Adam Lauretig&#39;s Professional Website on Adam Lauretig&#39;s Professional Website</title>
-    <link>/adamlauretig.github.io/</link>
+    <link>adamlauretig.github.io/</link>
     <description>Recent content in Adam Lauretig&#39;s Professional Website on Adam Lauretig&#39;s Professional Website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018</copyright>
     <lastBuildDate>Sun, 15 Oct 2017 00:00:00 -0400</lastBuildDate>
-    <atom:link href="/adamlauretig.github.io/" rel="self" type="application/rss+xml" />
+    <atom:link href="adamlauretig.github.io/" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Tokenizing on Stopwords</title>
-      <link>/adamlauretig.github.io/post/tokenizing-on-stopwords/</link>
+      <link>adamlauretig.github.io/post/tokenizing-on-stopwords/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>/adamlauretig.github.io/post/tokenizing-on-stopwords/</guid>
+      <guid>adamlauretig.github.io/post/tokenizing-on-stopwords/</guid>
       <description>&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Introduction&lt;/h1&gt;
 &lt;p&gt;Recently, I came across &lt;a href=&#34;https://github.com/dperezrada/evidence-tools/tree/master/nlp/keywords2vec&#34;&gt;the idea&lt;/a&gt; that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found &lt;a href=&#34;https://twitter.com/jeremyphoward/status/1094025901371621376&#34;&gt;via&lt;/a&gt;). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.&lt;/p&gt;
@@ -52,8 +52,9 @@ inaug_tokens &amp;lt;- tokens(x = char_tolower(tmp_data$txts), &amp;quot;word&am
 inaug_tokens2 &amp;lt;- tokens_remove(inaug_tokens, stopwords(&amp;quot;english&amp;quot;), padding = TRUE)
 
 # collocations which are either two or three words long, and occur at least twice
-cols &amp;lt;-  textstat_collocations(inaug_tokens2, size = 2:3, min_count = 2)
-
+cols &amp;lt;-  textstat_collocations(inaug_tokens2, size = 2, min_count = 2)
+# filter collocation
+cols &amp;lt;- cols[cols$z &amp;gt;= 2.58 ]
 # recombine results
 combined &amp;lt;- tokens_compound(inaug_tokens, cols)
 
@@ -93,7 +94,7 @@ basemodel$train(
   sentences = combined_list,
   epochs = basemodel$iter, 
   total_examples = basemodel$corpus_count)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 724907&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 725200&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;And now, we can examine the model output. We’ll need to bring the embedding matrix into R (again, see my gensim tutorial for details), and use cosine similarity to see how well this captures meaningful relationships:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(Matrix)
 embeds &amp;lt;- basemodel$wv$syn0
@@ -114,19 +115,19 @@ closest_vector &amp;lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##      united_states       constitution general_government 
-##          1.0000000          0.9355995          0.9210637 
-##        legislative     accountability            several 
-##          0.9012720          0.8822275          0.8714877 
-##          functions              under           congress 
-##          0.8665779          0.8595051          0.8582047 
-##          executive 
-##          0.8573942&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      united_states       constitution          voluntary 
+##          1.0000000          0.8862498          0.8830157 
+##            article general_government     administration 
+##          0.8800596          0.8781904          0.8682922 
+##            several             public        legislative 
+##          0.8621086          0.8526613          0.8525727 
+##              under 
+##          0.8515875&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## americans democracy    vision  problems   upon_us       old        up 
-## 1.0000000 0.9356345 0.9188319 0.9054188 0.9015402 0.9010827 0.8972994 
-##      down     quiet      fire 
-## 0.8909143 0.8896028 0.8861505&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  americans       live  america&amp;#39;s       come         us       face 
+##  1.0000000  0.9223503  0.9114914  0.9057723  0.9018762  0.8999249 
+##      quiet        old determined       lift 
+##  0.8973833  0.8942981  0.8927558  0.8904645&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>
@@ -134,10 +135,10 @@ closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;
     
     <item>
       <title>Monthly Militarized Interstate Dispute (MID) Panel </title>
-      <link>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</link>
+      <link>adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</link>
       <pubDate>Thu, 31 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</guid>
+      <guid>adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</guid>
       <description>&lt;p&gt;Just a brief note. For my dissertation, I needed to create a monthly panel of militarized interstate dispute (MID) data, which proved to be more difficult than initially anticipated. To “be kind to my future self,” I wrote up what I did on a &lt;a href=&#34;https://gist.github.com/adamlauretig/ce536aefe21523e2757ee4f261242b0c&#34;&gt;gist&lt;/a&gt;, and I’ll also copy the code below. If you find yourself in a similar situation, I hope this helps!&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Code to create a monthly, directed dyadic panel of 
 # Militarized Interstate Dispute data, with directional initiation
@@ -252,10 +253,10 @@ master_dyads &amp;lt;- do.call(rbind, mclapply(1:length(years), make_dyads, mc.c
     
     <item>
       <title>Generalized Propensity Score Weighting</title>
-      <link>/adamlauretig.github.io/post/generalized-propensity-score-weighting/</link>
+      <link>adamlauretig.github.io/post/generalized-propensity-score-weighting/</link>
       <pubDate>Sat, 03 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>/adamlauretig.github.io/post/generalized-propensity-score-weighting/</guid>
+      <guid>adamlauretig.github.io/post/generalized-propensity-score-weighting/</guid>
       <description>&lt;div id=&#34;generalized-propensity-score-weighting&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Generalized Propensity Score Weighting&lt;/h1&gt;
 &lt;p&gt;Adam Lauretig 2018-11-03&lt;/p&gt;
@@ -593,40 +594,40 @@ mean((true_coef - m2_coef)^2)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Mapping Indonesia&#39;s Civil Service</title>
-      <link>/adamlauretig.github.io/policy_reports/world_bank_report/</link>
+      <link>adamlauretig.github.io/policy_reports/world_bank_report/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/policy_reports/world_bank_report/</guid>
+      <guid>adamlauretig.github.io/policy_reports/world_bank_report/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Mapping Indonesia&#39;s Civil Service</title>
-      <link>/adamlauretig.github.io/publication/world_bank_report/</link>
+      <link>adamlauretig.github.io/publication/world_bank_report/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/publication/world_bank_report/</guid>
+      <guid>adamlauretig.github.io/publication/world_bank_report/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Statistics and International Security</title>
-      <link>/adamlauretig.github.io/publication/stats_intl_security/</link>
+      <link>adamlauretig.github.io/publication/stats_intl_security/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/publication/stats_intl_security/</guid>
+      <guid>adamlauretig.github.io/publication/stats_intl_security/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>External Project</title>
-      <link>/adamlauretig.github.io/project/example-external-project/</link>
+      <link>adamlauretig.github.io/project/example-external-project/</link>
       <pubDate>Wed, 27 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/project/example-external-project/</guid>
+      <guid>adamlauretig.github.io/project/example-external-project/</guid>
       <description></description>
     </item>
     

@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Data Cleaning on Adam Lauretig&#39;s Professional Website</title>
-    <link>/adamlauretig.github.io/tags/data-cleaning/</link>
+    <link>adamlauretig.github.io/tags/data-cleaning/</link>
     <description>Recent content in Data Cleaning on Adam Lauretig&#39;s Professional Website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018</copyright>
     <lastBuildDate>Thu, 31 Jan 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/adamlauretig.github.io/tags/data-cleaning/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="adamlauretig.github.io/tags/data-cleaning/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Monthly Militarized Interstate Dispute (MID) Panel </title>
-      <link>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</link>
+      <link>adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</link>
       <pubDate>Thu, 31 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</guid>
+      <guid>adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</guid>
       <description>Just a brief note. For my dissertation, I needed to create a monthly panel of militarized interstate dispute (MID) data, which proved to be more difficult than initially anticipated. To “be kind to my future self,” I wrote up what I did on a gist, and I’ll also copy the code below. If you find yourself in a similar situation, I hope this helps!
 # Code to create a monthly, directed dyadic panel of # Militarized Interstate Dispute data, with directional initiation # uses cshapes to create monthly list of all dyads, then uses data.</description>
     </item>
