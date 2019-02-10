@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.42.1" />
+  <meta name="author" content="Adam Lauretig">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="Tokenizing on Stopwords Adam Lauretig 2019-02-10
+Introduction Recently, I came across the idea that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via link). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.
+A brief note: &ldquo;tokenizing&rdquo; refers to splitting a document into words or phrases based on a pre-defined set of rules.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/adamlauretig.github.io/post/2019-02-10-tokenizing-on-stopwords/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#EF525B">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+      
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+      
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/adamlauretig.github.io/styles.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="/adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  <link rel="feed" href="/adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  
+
+  <link rel="manifest" href="/adamlauretig.github.io/site.webmanifest">
+  <link rel="icon" type="image/png" href="/adamlauretig.github.io/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/adamlauretig.github.io/img/icon-192.png">
+
+  <link rel="canonical" href="/adamlauretig.github.io/post/2019-02-10-tokenizing-on-stopwords/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@adamlauretig">
+  <meta property="twitter:creator" content="@adamlauretig">
+  
+  <meta property="og:site_name" content="Adam Lauretig&#39;s Professional Website">
+  <meta property="og:url" content="/adamlauretig.github.io/post/2019-02-10-tokenizing-on-stopwords/">
+  <meta property="og:title" content=" | Adam Lauretig&#39;s Professional Website">
+  <meta property="og:description" content="Tokenizing on Stopwords Adam Lauretig 2019-02-10
+Introduction Recently, I came across the idea that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via link). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.
+A brief note: &ldquo;tokenizing&rdquo; refers to splitting a document into words or phrases based on a pre-defined set of rules.">
+  <meta property="og:locale" content="en-us">
+  
+  
+  
+  
+
+  
+  
+
+  <title> | Adam Lauretig&#39;s Professional Website</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/adamlauretig.github.io/">Adam Lauretig&#39;s Professional Website</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name"></h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="0001-01-01 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Jan 1, 0001
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Adam Lauretig">
+  </span>
+
+  
+
+  
+  
+
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=&amp;url=%2fadamlauretig.github.io%2fpost%2f2019-02-10-tokenizing-on-stopwords%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fadamlauretig.github.io%2fpost%2f2019-02-10-tokenizing-on-stopwords%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fadamlauretig.github.io%2fpost%2f2019-02-10-tokenizing-on-stopwords%2f&amp;title="
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fadamlauretig.github.io%2fpost%2f2019-02-10-tokenizing-on-stopwords%2f&amp;title="
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=&amp;body=%2fadamlauretig.github.io%2fpost%2f2019-02-10-tokenizing-on-stopwords%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+<h1 id="tokenizing-on-stopwords">Tokenizing on Stopwords</h1>
+
+<p>Adam Lauretig
+2019-02-10</p>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>Recently, I came across <a href="https://github.com/dperezrada/evidence-tools/tree/master/nlp/keywords2vec" target="_blank">the idea</a> that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via <a href="https://twitter.com/jeremyphoward/status/1094025901371621376" target="_blank">link</a>). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.</p>
+
+<p>A brief note: &ldquo;tokenizing&rdquo; refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and &ldquo;end-of-sentence&rdquo; punctuation (ex: &ldquo;!, ?, .&rdquo;). This would then return a list of words, or &ldquo;unigrams.&rdquo; These can then be re-combined into <em>n-grams</em>, or multiword phrases. # An R Implementation</p>
+
+<p>The code in the linked repo was all in Python, but, like many political scientists, I&rsquo;m more comfortable in R. (This is not a statement on the relative merits of each language, simply my own comfort level. Please, no language wars here!). I was curious whether it would be possible to implement this approach in R.</p>
+
+<p>My first thought was to use the amazing <em>quanteda</em> package, and I <a href="https://github.com/quanteda/quanteda/issues/1600" target="_blank">asked</a> the maintainers about this approach. <a href="https://github.com/kbenoit" target="_blank">Ken Benoit</a> had some helpful suggestions, as well as a nice discussion about the <em>quanteda</em> design philosophy. This approach first tokenizes the corpus, removes stopwords, creates phrases from the remaining words, and finally, recombines them with the original <em>tokens</em> object. This object can then be used in word2vec or other approaches.</p>
+
+<p>Here, I test the approach on the US presidential inauagural addresses corpus in <em>quanteda</em>. I like this corpus because it&rsquo;s small enough that computation is quick, and there is enough thematic structure that human inspection can tell if the results &ldquo;make sense.&rdquo;</p>
+
+<pre><code class="language-r">options(stringsAsFactors = FALSE)
+library(quanteda)
+</code></pre>
+
+<pre><code>## Package version: 1.3.4
+
+## Parallel computing: 2 of 8 threads used.
+
+## See https://quanteda.io for tutorials and examples.
+
+## 
+## Attaching package: 'quanteda'
+
+## The following object is masked from 'package:utils':
+## 
+##     View
+</code></pre>
+
+<pre><code class="language-r">library(data.table)
+library(stringr)
+# creating text
+d &lt;- quanteda::data_corpus_inaugural
+tmp_data &lt;- data.table::data.table(txts = d$documents$texts, yr = d$documents$Year, 
+  president = paste(d$documents$FirstName, d$documents$President))
+tmp_data &lt;- as.data.table(tmp_data)
+
+# tokenize the text
+inaug_tokens &lt;- tokens(x = char_tolower(tmp_data$txts), &quot;word&quot;, 
+  remove_punct = TRUE, remove_separators = TRUE)
+
+# remove stopwords, but preserve the initial structure
+inaug_tokens2 &lt;- tokens_remove(inaug_tokens, stopwords(&quot;english&quot;), padding = TRUE)
+
+# collocations which are either two or three words long, and occur at least twice
+cols &lt;-  textstat_collocations(inaug_tokens2, size = 2:3, min_count = 2)
+
+# recombine results
+combined &lt;- tokens_compound(inaug_tokens, cols)
+
+# first twenty tokens of Obama's first inaugural: 
+combined[[56]][1:20]
+</code></pre>
+
+<pre><code>##  [1] &quot;my&quot;              &quot;fellow_citizens&quot; &quot;i&quot;              
+##  [4] &quot;stand&quot;           &quot;here&quot;            &quot;today&quot;          
+##  [7] &quot;humbled&quot;         &quot;by&quot;              &quot;the&quot;            
+## [10] &quot;task&quot;            &quot;before&quot;          &quot;us&quot;             
+## [13] &quot;grateful&quot;        &quot;for&quot;             &quot;the&quot;            
+## [16] &quot;trust&quot;           &quot;you&quot;             &quot;have&quot;           
+## [19] &quot;bestowed&quot;        &quot;mindful&quot;
+</code></pre>
+
+<h1 id="word2vec">Word2vec</h1>
+
+<p>Now that we have these recombined tokens, we can use them in our statistical model of choice. Here, I used word2vec, in line with the idea that inspired me. I use the <em>reticulate</em> package to call the gensim implementation of word2vec, which I initially discussed <a href="https://github.com/adamlauretig/gensim_in_R/blob/master/gensim_in_r.md" target="_blank">here</a>.</p>
+
+<pre><code class="language-r">library(reticulate)
+gensim &lt;- import(&quot;gensim&quot;) # import the gensim library
+Word2Vec &lt;- gensim$models$Word2Vec # Extract the Word2Vec model
+multiprocessing &lt;- import(&quot;multiprocessing&quot;) # For parallel processing
+
+# create the word2vec object
+basemodel = Word2Vec(
+    workers = 1, # using 1 core
+    window = 5L, # co-occurence window of size 5
+    iter = 10L, # iter = sweeps of SGD through the data; more is better
+    sg = 1L,
+    hs = 0L, negative = 1L, 
+    size = 25L # only 25, since it's a small corpus
+)
+
+# remove quanteda &quot;textnn&quot; names
+combined_list &lt;- unname(as.list(combined))
+
+basemodel$build_vocab(sentences = combined_list)
+basemodel$train(
+  sentences = combined_list,
+  epochs = basemodel$iter, 
+  total_examples = basemodel$corpus_count)
+</code></pre>
+
+<pre><code>## [1] 724907
+</code></pre>
+
+<p>And now, we can examine the model output. We&rsquo;ll need to bring the embedding matrix into R (again, see my gensim tutorial for details), and use cosine similarity to see how well this captures meaningful relationships:</p>
+
+<pre><code class="language-r">library(Matrix)
+embeds &lt;- basemodel$wv$syn0
+rownames(embeds) &lt;- basemodel$wv$index2word
+
+# function for cosine distance
+closest_vector &lt;- function(vec1, mat1){
+  vec1 &lt;- Matrix(vec1, nrow = 1, ncol = length(vec1))
+  mat1 &lt;- Matrix(mat1)
+  mat_magnitudes &lt;- rowSums(mat1^2)
+  vec_magnitudes &lt;- rowSums(vec1^2)
+  sim &lt;- (t(tcrossprod(vec1, mat1)/
+      (sqrt(tcrossprod(vec_magnitudes, mat_magnitudes)))))
+  sim2 &lt;- matrix(sim, dimnames = list(rownames(sim)))
+  
+  w &lt;- sim2[order(-sim2),,drop = FALSE]
+  w[1:10,]
+}
+
+closest_vector(embeds[&quot;united_states&quot;, ], embeds)
+</code></pre>
+
+<pre><code>##      united_states       constitution     accountability 
+##          1.0000000          0.9172933          0.9102838 
+## general_government        legislative            several 
+##          0.9082577          0.8973878          0.8953288 
+##          executive              under           congress 
+##          0.8931787          0.8730342          0.8645337 
+##          operation 
+##          0.8637562
+</code></pre>
+
+<pre><code class="language-r">closest_vector(embeds[&quot;americans&quot;, ], embeds)
+</code></pre>
+
+<pre><code>## americans democracy   upon_us      sick mountains      pain      eyes 
+## 1.0000000 0.9535365 0.9165117 0.9148685 0.9137663 0.9090743 0.9073748 
+##      down     image  problems 
+## 0.9071674 0.9061596 0.9045242
+</code></pre>
+
+<p>Not bad for an initial analysis!</p>
+
+    </div>
+
+    
+
+
+    
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/adamlauretig.github.io/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+
+  </body>
+</html>
+

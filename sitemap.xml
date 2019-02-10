@@ -5,6 +5,15 @@
     
     <url>
     
+      <loc>/adamlauretig.github.io/post/tokenizing-on-stopwords/</loc>
+      <lastmod>2019-02-10T00:00:00+00:00</lastmod>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</loc>
       <lastmod>2019-01-31T00:00:00+00:00</lastmod>
     </url>
@@ -95,6 +104,14 @@
     
     <url>
     
+      <loc>/adamlauretig.github.io/post/2019-02-10-tokenizing-on-stopwords/</loc>
+    </url>
+    
+  
+    
+    
+    <url>
+    
       <loc>/adamlauretig.github.io/</loc>
       <lastmod>2017-10-15T00:00:00-04:00</lastmod>
       <priority>0</priority>
@@ -176,6 +193,26 @@
     
       <loc>/adamlauretig.github.io/tags/</loc>
       <lastmod>2018-11-03T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/adamlauretig.github.io/tags/text-as-data/</loc>
+      <lastmod>2019-02-10T00:00:00+00:00</lastmod>
+      <priority>0</priority>
+    </url>
+    
+  
+    
+    
+    <url>
+    
+      <loc>/adamlauretig.github.io/categories/text-as-data/</loc>
+      <lastmod>2019-02-10T00:00:00+00:00</lastmod>
       <priority>0</priority>
     </url>
     
