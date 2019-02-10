@@ -112,18 +112,18 @@ closest_vector &amp;lt;- function(vec1, mat1){
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##      united_states       constitution general_government 
-##          1.0000000          0.9142132          0.8871719 
-##            several              under        departments 
-##          0.8858783          0.8827281          0.8741516 
-##     accountability        application        legislative 
-##          0.8728139          0.8695302          0.8684498 
-##        enforcement 
-##          0.8616819&lt;/code&gt;&lt;/pre&gt;
+##          1.0000000          0.9207115          0.8979772 
+##            several          executive        legislative 
+##          0.8862262          0.8831764          0.8811066 
+##              under        enforcement     accountability 
+##          0.8779370          0.8757026          0.8742267 
+##          functions 
+##          0.8727625&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##     americans     democracy      problems    determined       upon_us 
-##     1.0000000     0.9512198     0.9310385     0.9176921     0.9149151 
-##     mountains       made_us created_equal          pain        gather 
-##     0.9066958     0.9053609     0.9012244     0.8981136     0.8963164&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  americans   problems       sick one_nation  democracy determined 
+##  1.0000000  0.9537905  0.9315250  0.9282612  0.9257370  0.9157967 
+##       pain       heal      image     vision 
+##  0.9149906  0.9128685  0.9108324  0.9096239&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>
@@ -625,161 +625,6 @@ mean((true_coef - m2_coef)^2)&lt;/code&gt;&lt;/pre&gt;
       
       <guid>/adamlauretig.github.io/project/example-external-project/</guid>
       <description></description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>/adamlauretig.github.io/post/2019-02-10-tokenizing-on-stopwords/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/adamlauretig.github.io/post/2019-02-10-tokenizing-on-stopwords/</guid>
-      <description>
-
-&lt;h1 id=&#34;tokenizing-on-stopwords&#34;&gt;Tokenizing on Stopwords&lt;/h1&gt;
-
-&lt;p&gt;Adam Lauretig
-2019-02-10&lt;/p&gt;
-
-&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
-
-&lt;p&gt;Recently, I came across &lt;a href=&#34;https://github.com/dperezrada/evidence-tools/tree/master/nlp/keywords2vec&#34; target=&#34;_blank&#34;&gt;the idea&lt;/a&gt; that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via &lt;a href=&#34;https://twitter.com/jeremyphoward/status/1094025901371621376&#34; target=&#34;_blank&#34;&gt;link&lt;/a&gt;). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.&lt;/p&gt;
-
-&lt;p&gt;A brief note: &amp;ldquo;tokenizing&amp;rdquo; refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and &amp;ldquo;end-of-sentence&amp;rdquo; punctuation (ex: &amp;ldquo;!, ?, .&amp;rdquo;). This would then return a list of words, or &amp;ldquo;unigrams.&amp;rdquo; These can then be re-combined into &lt;em&gt;n-grams&lt;/em&gt;, or multiword phrases. # An R Implementation&lt;/p&gt;
-
-&lt;p&gt;The code in the linked repo was all in Python, but, like many political scientists, I&amp;rsquo;m more comfortable in R. (This is not a statement on the relative merits of each language, simply my own comfort level. Please, no language wars here!). I was curious whether it would be possible to implement this approach in R.&lt;/p&gt;
-
-&lt;p&gt;My first thought was to use the amazing &lt;em&gt;quanteda&lt;/em&gt; package, and I &lt;a href=&#34;https://github.com/quanteda/quanteda/issues/1600&#34; target=&#34;_blank&#34;&gt;asked&lt;/a&gt; the maintainers about this approach. &lt;a href=&#34;https://github.com/kbenoit&#34; target=&#34;_blank&#34;&gt;Ken Benoit&lt;/a&gt; had some helpful suggestions, as well as a nice discussion about the &lt;em&gt;quanteda&lt;/em&gt; design philosophy. This approach first tokenizes the corpus, removes stopwords, creates phrases from the remaining words, and finally, recombines them with the original &lt;em&gt;tokens&lt;/em&gt; object. This object can then be used in word2vec or other approaches.&lt;/p&gt;
-
-&lt;p&gt;Here, I test the approach on the US presidential inauagural addresses corpus in &lt;em&gt;quanteda&lt;/em&gt;. I like this corpus because it&amp;rsquo;s small enough that computation is quick, and there is enough thematic structure that human inspection can tell if the results &amp;ldquo;make sense.&amp;rdquo;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;options(stringsAsFactors = FALSE)
-library(quanteda)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## Package version: 1.3.4
-
-## Parallel computing: 2 of 8 threads used.
-
-## See https://quanteda.io for tutorials and examples.
-
-## 
-## Attaching package: &#39;quanteda&#39;
-
-## The following object is masked from &#39;package:utils&#39;:
-## 
-##     View
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(data.table)
-library(stringr)
-# creating text
-d &amp;lt;- quanteda::data_corpus_inaugural
-tmp_data &amp;lt;- data.table::data.table(txts = d$documents$texts, yr = d$documents$Year, 
-  president = paste(d$documents$FirstName, d$documents$President))
-tmp_data &amp;lt;- as.data.table(tmp_data)
-
-# tokenize the text
-inaug_tokens &amp;lt;- tokens(x = char_tolower(tmp_data$txts), &amp;quot;word&amp;quot;, 
-  remove_punct = TRUE, remove_separators = TRUE)
-
-# remove stopwords, but preserve the initial structure
-inaug_tokens2 &amp;lt;- tokens_remove(inaug_tokens, stopwords(&amp;quot;english&amp;quot;), padding = TRUE)
-
-# collocations which are either two or three words long, and occur at least twice
-cols &amp;lt;-  textstat_collocations(inaug_tokens2, size = 2:3, min_count = 2)
-
-# recombine results
-combined &amp;lt;- tokens_compound(inaug_tokens, cols)
-
-# first twenty tokens of Obama&#39;s first inaugural: 
-combined[[56]][1:20]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;my&amp;quot;              &amp;quot;fellow_citizens&amp;quot; &amp;quot;i&amp;quot;              
-##  [4] &amp;quot;stand&amp;quot;           &amp;quot;here&amp;quot;            &amp;quot;today&amp;quot;          
-##  [7] &amp;quot;humbled&amp;quot;         &amp;quot;by&amp;quot;              &amp;quot;the&amp;quot;            
-## [10] &amp;quot;task&amp;quot;            &amp;quot;before&amp;quot;          &amp;quot;us&amp;quot;             
-## [13] &amp;quot;grateful&amp;quot;        &amp;quot;for&amp;quot;             &amp;quot;the&amp;quot;            
-## [16] &amp;quot;trust&amp;quot;           &amp;quot;you&amp;quot;             &amp;quot;have&amp;quot;           
-## [19] &amp;quot;bestowed&amp;quot;        &amp;quot;mindful&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&#34;word2vec&#34;&gt;Word2vec&lt;/h1&gt;
-
-&lt;p&gt;Now that we have these recombined tokens, we can use them in our statistical model of choice. Here, I used word2vec, in line with the idea that inspired me. I use the &lt;em&gt;reticulate&lt;/em&gt; package to call the gensim implementation of word2vec, which I initially discussed &lt;a href=&#34;https://github.com/adamlauretig/gensim_in_R/blob/master/gensim_in_r.md&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(reticulate)
-gensim &amp;lt;- import(&amp;quot;gensim&amp;quot;) # import the gensim library
-Word2Vec &amp;lt;- gensim$models$Word2Vec # Extract the Word2Vec model
-multiprocessing &amp;lt;- import(&amp;quot;multiprocessing&amp;quot;) # For parallel processing
-
-# create the word2vec object
-basemodel = Word2Vec(
-    workers = 1, # using 1 core
-    window = 5L, # co-occurence window of size 5
-    iter = 10L, # iter = sweeps of SGD through the data; more is better
-    sg = 1L,
-    hs = 0L, negative = 1L, 
-    size = 25L # only 25, since it&#39;s a small corpus
-)
-
-# remove quanteda &amp;quot;textnn&amp;quot; names
-combined_list &amp;lt;- unname(as.list(combined))
-
-basemodel$build_vocab(sentences = combined_list)
-basemodel$train(
-  sentences = combined_list,
-  epochs = basemodel$iter, 
-  total_examples = basemodel$corpus_count)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## [1] 724907
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And now, we can examine the model output. We&amp;rsquo;ll need to bring the embedding matrix into R (again, see my gensim tutorial for details), and use cosine similarity to see how well this captures meaningful relationships:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;library(Matrix)
-embeds &amp;lt;- basemodel$wv$syn0
-rownames(embeds) &amp;lt;- basemodel$wv$index2word
-
-# function for cosine distance
-closest_vector &amp;lt;- function(vec1, mat1){
-  vec1 &amp;lt;- Matrix(vec1, nrow = 1, ncol = length(vec1))
-  mat1 &amp;lt;- Matrix(mat1)
-  mat_magnitudes &amp;lt;- rowSums(mat1^2)
-  vec_magnitudes &amp;lt;- rowSums(vec1^2)
-  sim &amp;lt;- (t(tcrossprod(vec1, mat1)/
-      (sqrt(tcrossprod(vec_magnitudes, mat_magnitudes)))))
-  sim2 &amp;lt;- matrix(sim, dimnames = list(rownames(sim)))
-  
-  w &amp;lt;- sim2[order(-sim2),,drop = FALSE]
-  w[1:10,]
-}
-
-closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;##      united_states       constitution     accountability 
-##          1.0000000          0.9172933          0.9102838 
-## general_government        legislative            several 
-##          0.9082577          0.8973878          0.8953288 
-##          executive              under           congress 
-##          0.8931787          0.8730342          0.8645337 
-##          operation 
-##          0.8637562
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code&gt;## americans democracy   upon_us      sick mountains      pain      eyes 
-## 1.0000000 0.9535365 0.9165117 0.9148685 0.9137663 0.9090743 0.9073748 
-##      down     image  problems 
-## 0.9071674 0.9061596 0.9045242
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
-</description>
     </item>
     
   </channel>
