@@ -116,19 +116,19 @@ closest_vector &amp;lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##      united_states       constitution              under 
-##          1.0000000          0.8790264          0.8745554 
-## general_government            article        legislative 
-##          0.8744101          0.8593328          0.8401053 
-##          executive     administration          functions 
-##          0.8374390          0.8301949          0.8294463 
-##             vested 
-##          0.8282233&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      united_states       constitution             powers 
+##          1.0000000          0.8889037          0.8756674 
+##        legislative general_government            article 
+##          0.8708266          0.8659566          0.8638155 
+##          functions        true_spirit            defects 
+##          0.8551532          0.8535297          0.8512036 
+##              under 
+##          0.8448828&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  americans    resolve       face       live      quiet       poor 
-##  1.0000000  0.9412954  0.9259269  0.9254162  0.9228658  0.9148526 
-##       come        old determined    america 
-##  0.9072915  0.9038206  0.9013127  0.8960379&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  americans     voices      quiet determined       face       live 
+##  1.0000000  0.9418988  0.9345951  0.9291352  0.9197350  0.9177286 
+##         us       come    resolve        old 
+##  0.9149486  0.9117749  0.9026791  0.8987663&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>
