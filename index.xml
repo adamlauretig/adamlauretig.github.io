@@ -11,6 +11,16 @@
     <atom:link href="adamlauretig.github.io/" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Identification and Inference in Bayesian Word Embeddings</title>
+      <link>adamlauretig.github.io/publication/bwe/</link>
+      <pubDate>Mon, 01 Apr 2019 00:00:00 -0400</pubDate>
+      
+      <guid>adamlauretig.github.io/publication/bwe/</guid>
+      <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Tokenizing on Stopwords</title>
       <link>adamlauretig.github.io/post/tokenizing-on-stopwords/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
@@ -116,19 +126,19 @@ closest_vector &amp;lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##      united_states       constitution             powers 
-##          1.0000000          0.8889037          0.8756674 
-##        legislative general_government            article 
-##          0.8708266          0.8659566          0.8638155 
-##          functions        true_spirit            defects 
-##          0.8551532          0.8535297          0.8512036 
-##              under 
-##          0.8448828&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      united_states general_government       constitution 
+##          1.0000000          0.8938083          0.8732095 
+##              under        legislative            several 
+##          0.8469944          0.8414104          0.8328548 
+##     administration             vested           exercise 
+##          0.8306045          0.8223072          0.8213620 
+##            article 
+##          0.8190785&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  americans     voices      quiet determined       face       live 
-##  1.0000000  0.9418988  0.9345951  0.9291352  0.9197350  0.9177286 
-##         us       come    resolve        old 
-##  0.9149486  0.9117749  0.9026791  0.8987663&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  americans      quiet       live   together determined         us 
+##  1.0000000  0.9428605  0.9276200  0.9133305  0.9092300  0.9087352 
+##       face        old    resolve       come 
+##  0.9038716  0.8998618  0.8990172  0.8974359&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>
