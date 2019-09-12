@@ -38,7 +38,8 @@
 &lt;p&gt;Here, I test the approach on the US presidential inauagural addresses corpus in &lt;em&gt;quanteda&lt;/em&gt;. I like this corpus because it’s small enough that computation is quick, and there is enough thematic structure that human inspection can tell if the results “make sense.”&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;options(stringsAsFactors = FALSE)
 library(quanteda)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## Package version: 1.3.4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: package &amp;#39;quanteda&amp;#39; was built under R version 3.5.2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Package version: 1.5.1&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## Parallel computing: 2 of 8 threads used.&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## See https://quanteda.io for tutorials and examples.&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## 
@@ -126,19 +127,19 @@ closest_vector &amp;lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##      united_states       constitution general_government 
-##          1.0000000          0.8872956          0.8711583 
-##            defects        legislative        true_spirit 
-##          0.8493550          0.8368547          0.8285203 
-##              under            several     administration 
-##          0.8265948          0.8240705          0.8157383 
-##          executive 
-##          0.8145208&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      united_states       constitution              under 
+##          1.0000000          0.8965220          0.8860941 
+## general_government            article             powers 
+##          0.8758311          0.8636659          0.8617410 
+##     constitutional            several             vested 
+##          0.8286628          0.8245506          0.8229876 
+##     administration 
+##          0.8181587&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  americans      quiet       live         us       come       face 
-##  1.0000000  0.9307666  0.9260697  0.9214159  0.9153564  0.9147729 
-## determined    resolve     voices  america&amp;#39;s 
-##  0.9128003  0.9119230  0.9068884  0.9009601&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  americans       face     voices determined challenges       live 
+##  1.0000000  0.9179609  0.9093661  0.8994857  0.8993808  0.8988697 
+##        old      quiet  america&amp;#39;s         us 
+##  0.8984957  0.8961338  0.8934881  0.8877389&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>

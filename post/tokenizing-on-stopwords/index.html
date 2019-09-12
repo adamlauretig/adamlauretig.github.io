@@ -327,7 +327,8 @@ A brief note: “tokenizing” refers to splitting a document into words or phra
 <p>Here, I test the approach on the US presidential inauagural addresses corpus in <em>quanteda</em>. I like this corpus because it’s small enough that computation is quick, and there is enough thematic structure that human inspection can tell if the results “make sense.”</p>
 <pre class="r"><code>options(stringsAsFactors = FALSE)
 library(quanteda)</code></pre>
-<pre><code>## Package version: 1.3.4</code></pre>
+<pre><code>## Warning: package &#39;quanteda&#39; was built under R version 3.5.2</code></pre>
+<pre><code>## Package version: 1.5.1</code></pre>
 <pre><code>## Parallel computing: 2 of 8 threads used.</code></pre>
 <pre><code>## See https://quanteda.io for tutorials and examples.</code></pre>
 <pre><code>## 
@@ -415,19 +416,19 @@ closest_vector &lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&quot;united_states&quot;, ], embeds)</code></pre>
-<pre><code>##      united_states       constitution general_government 
-##          1.0000000          0.8872956          0.8711583 
-##            defects        legislative        true_spirit 
-##          0.8493550          0.8368547          0.8285203 
-##              under            several     administration 
-##          0.8265948          0.8240705          0.8157383 
-##          executive 
-##          0.8145208</code></pre>
+<pre><code>##      united_states       constitution              under 
+##          1.0000000          0.8965220          0.8860941 
+## general_government            article             powers 
+##          0.8758311          0.8636659          0.8617410 
+##     constitutional            several             vested 
+##          0.8286628          0.8245506          0.8229876 
+##     administration 
+##          0.8181587</code></pre>
 <pre class="r"><code>closest_vector(embeds[&quot;americans&quot;, ], embeds)</code></pre>
-<pre><code>##  americans      quiet       live         us       come       face 
-##  1.0000000  0.9307666  0.9260697  0.9214159  0.9153564  0.9147729 
-## determined    resolve     voices  america&#39;s 
-##  0.9128003  0.9119230  0.9068884  0.9009601</code></pre>
+<pre><code>##  americans       face     voices determined challenges       live 
+##  1.0000000  0.9179609  0.9093661  0.8994857  0.8993808  0.8988697 
+##        old      quiet  america&#39;s         us 
+##  0.8984957  0.8961338  0.8934881  0.8877389</code></pre>
 <p>Not bad for an initial analysis!</p>
 </div>
 
