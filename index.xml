@@ -127,19 +127,19 @@ closest_vector &amp;lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##      united_states       constitution              under 
-##          1.0000000          0.8965220          0.8860941 
-## general_government            article             powers 
-##          0.8758311          0.8636659          0.8617410 
-##     constitutional            several             vested 
-##          0.8286628          0.8245506          0.8229876 
-##     administration 
-##          0.8181587&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      united_states general_government       constitution 
+##          1.0000000          0.8850993          0.8801943 
+##        legislative     administration              under 
+##          0.8763322          0.8502292          0.8485791 
+##        true_spirit            several          executive 
+##          0.8376377          0.8364533          0.8357046 
+##          functions 
+##          0.8256670&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  americans       face     voices determined challenges       live 
-##  1.0000000  0.9179609  0.9093661  0.8994857  0.8993808  0.8988697 
-##        old      quiet  america&amp;#39;s         us 
-##  0.8984957  0.8961338  0.8934881  0.8877389&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  americans         us determined   together      today     voices 
+##  1.0000000  0.9120394  0.9111896  0.9072363  0.9063659  0.9061638 
+##        old       face challenges       live 
+##  0.9022811  0.9007739  0.8968665  0.8943474&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>
