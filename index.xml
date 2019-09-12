@@ -128,18 +128,18 @@ closest_vector &amp;lt;- function(vec1, mat1){
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;##      united_states       constitution            article 
-##          1.0000000          0.8806459          0.8725362 
-##     administration          functions general_government 
-##          0.8587694          0.8574828          0.8498420 
-##        legislative            defects            framers 
-##          0.8459242          0.8350019          0.8302331 
-##          voluntary 
-##          0.8290351&lt;/code&gt;&lt;/pre&gt;
+##          1.0000000          0.8982270          0.8784213 
+## general_government          functions        legislative 
+##          0.8601122          0.8563910          0.8503908 
+##     administration          executive              under 
+##          0.8421888          0.8353048          0.8336016 
+##     accountability 
+##          0.8305966&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  americans      quiet  america&amp;#39;s    resolve       live       face 
-##  1.0000000  0.9205525  0.9170933  0.9049597  0.9036525  0.9022871 
-##     though       know       anew challenges 
-##  0.9021083  0.8979167  0.8931162  0.8920420&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  americans determined         us       face       live     things 
+##  1.0000000  0.9349108  0.9304312  0.9266197  0.9161446  0.9018302 
+##      tasks        old challenges       come 
+##  0.8960057  0.8932782  0.8906413  0.8905641&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>
