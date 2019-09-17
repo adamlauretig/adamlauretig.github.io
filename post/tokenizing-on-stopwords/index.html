@@ -62,8 +62,8 @@ A brief note: “tokenizing” refers to splitting a document into words or phra
   
 
   
-  <link rel="alternate" href="adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
-  <link rel="feed" href="adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig&#39;s Professional Website">
+  <link rel="alternate" href="adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig">
+  <link rel="feed" href="adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig">
   
 
   <link rel="manifest" href="/adamlauretig.github.io/site.webmanifest">
@@ -77,9 +77,9 @@ A brief note: “tokenizing” refers to splitting a document into words or phra
   <meta property="twitter:site" content="@adamlauretig">
   <meta property="twitter:creator" content="@adamlauretig">
   
-  <meta property="og:site_name" content="Adam Lauretig&#39;s Professional Website">
+  <meta property="og:site_name" content="Adam Lauretig">
   <meta property="og:url" content="adamlauretig.github.io/post/tokenizing-on-stopwords/">
-  <meta property="og:title" content="Tokenizing on Stopwords | Adam Lauretig&#39;s Professional Website">
+  <meta property="og:title" content="Tokenizing on Stopwords | Adam Lauretig">
   <meta property="og:description" content="Introduction Recently, I came across the idea that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found via). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.
 A brief note: “tokenizing” refers to splitting a document into words or phrases based on a pre-defined set of rules. The most common way to do this is by splitting on spaces and “end-of-sentence” punctuation (ex: “!">
   <meta property="og:locale" content="en-us">
@@ -92,7 +92,7 @@ A brief note: “tokenizing” refers to splitting a document into words or phra
   
   
 
-  <title>Tokenizing on Stopwords | Adam Lauretig&#39;s Professional Website</title>
+  <title>Tokenizing on Stopwords | Adam Lauretig</title>
 
 </head>
 <body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
@@ -111,7 +111,7 @@ A brief note: “tokenizing” refers to splitting a document into words or phra
         <span class="icon-bar"></span>
       </button>
       
-      <a class="navbar-brand" href="/adamlauretig.github.io/">Adam Lauretig&#39;s Professional Website</a>
+      <a class="navbar-brand" href="/adamlauretig.github.io/">Adam Lauretig</a>
     </div>
 
     
@@ -416,19 +416,19 @@ closest_vector &lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&quot;united_states&quot;, ], embeds)</code></pre>
-<pre><code>##      united_states       constitution            article 
-##          1.0000000          0.8982270          0.8784213 
-## general_government          functions        legislative 
-##          0.8601122          0.8563910          0.8503908 
-##     administration          executive              under 
-##          0.8421888          0.8353048          0.8336016 
-##     accountability 
-##          0.8305966</code></pre>
+<pre><code>##      united_states general_government       constitution 
+##          1.0000000          0.8958587          0.8746637 
+##            article        legislative            defects 
+##          0.8734397          0.8710261          0.8700320 
+##          functions            several     administration 
+##          0.8683402          0.8624958          0.8606461 
+##        true_spirit 
+##          0.8501782</code></pre>
 <pre class="r"><code>closest_vector(embeds[&quot;americans&quot;, ], embeds)</code></pre>
-<pre><code>##  americans determined         us       face       live     things 
-##  1.0000000  0.9349108  0.9304312  0.9266197  0.9161446  0.9018302 
-##      tasks        old challenges       come 
-##  0.8960057  0.8932782  0.8906413  0.8905641</code></pre>
+<pre><code>## americans    voices      live     today       old      face        us 
+## 1.0000000 0.9221618 0.9178433 0.9157189 0.9136885 0.9069475 0.9047535 
+##  together      work america&#39;s 
+## 0.9024239 0.9019119 0.9008923</code></pre>
 <p>Not bad for an initial analysis!</p>
 </div>
 
