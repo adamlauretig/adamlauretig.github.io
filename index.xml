@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Adam Lauretig on Adam Lauretig</title>
-    <link>/adamlauretig.github.io/</link>
+    <link>adamlauretig.github.io/</link>
     <description>Recent content in Adam Lauretig on Adam Lauretig</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018</copyright>
     <lastBuildDate>Sun, 15 Oct 2017 00:00:00 -0400</lastBuildDate>
-    <atom:link href="/adamlauretig.github.io/" rel="self" type="application/rss+xml" />
+    <atom:link href="adamlauretig.github.io/" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Identification and Inference in Bayesian Word Embeddings</title>
-      <link>/adamlauretig.github.io/publication/bwe/</link>
+      <link>adamlauretig.github.io/publication/bwe/</link>
       <pubDate>Mon, 01 Apr 2019 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/publication/bwe/</guid>
+      <guid>adamlauretig.github.io/publication/bwe/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Tokenizing on Stopwords</title>
-      <link>/adamlauretig.github.io/post/tokenizing-on-stopwords/</link>
+      <link>adamlauretig.github.io/post/tokenizing-on-stopwords/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>
       
-      <guid>/adamlauretig.github.io/post/tokenizing-on-stopwords/</guid>
+      <guid>adamlauretig.github.io/post/tokenizing-on-stopwords/</guid>
       <description>&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Introduction&lt;/h1&gt;
 &lt;p&gt;Recently, I came across &lt;a href=&#34;https://github.com/dperezrada/evidence-tools/tree/master/nlp/keywords2vec&#34;&gt;the idea&lt;/a&gt; that you can get relevant keywords for word2vec by tokenizing a corpus on stopwords, in addition to standard punctuation (found &lt;a href=&#34;https://twitter.com/jeremyphoward/status/1094025901371621376&#34;&gt;via&lt;/a&gt;). This seemed like a really cool unsupervised way of capturing (hopefully!) relevant phrases. I was intrigued.&lt;/p&gt;
@@ -127,19 +127,19 @@ closest_vector &amp;lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##      united_states general_government       constitution 
-##          1.0000000          0.8684849          0.8671658 
-##            article              under           contains 
-##          0.8555758          0.8491958          0.8491619 
-##        legislative        true_spirit          executive 
-##          0.8479115          0.8387217          0.8386298 
-##          amendment 
-##          0.8300927&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      united_states       constitution              under 
+##          1.0000000          0.8846560          0.8730762 
+## general_government        legislative            article 
+##          0.8679292          0.8607640          0.8579852 
+##             powers          functions     accountability 
+##          0.8513404          0.8367026          0.8289963 
+##            several 
+##          0.8271896&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  americans determined       live    resolve       face         us 
-##  1.0000000  0.9333081  0.9152275  0.9135118  0.9100747  0.9093488 
-##        old   together      quiet  america&amp;#39;s 
-##  0.9026938  0.9010831  0.8994783  0.8972547&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  americans      quiet determined     things    resolve       come 
+##  1.0000000  0.9341712  0.9265856  0.9190636  0.9189805  0.9145691 
+##       live       face     voices  america&amp;#39;s 
+##  0.9124157  0.9051158  0.9047170  0.9025516&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>
@@ -147,10 +147,10 @@ closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;
     
     <item>
       <title>Monthly Militarized Interstate Dispute (MID) Panel </title>
-      <link>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</link>
+      <link>adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</link>
       <pubDate>Thu, 31 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</guid>
+      <guid>adamlauretig.github.io/post/monthly-militarized-interstate-dispute-mid-panel/</guid>
       <description>&lt;p&gt;Just a brief note. For my dissertation, I needed to create a monthly panel of militarized interstate dispute (MID) data, which proved to be more difficult than initially anticipated. To “be kind to my future self,” I wrote up what I did on a &lt;a href=&#34;https://gist.github.com/adamlauretig/ce536aefe21523e2757ee4f261242b0c&#34;&gt;gist&lt;/a&gt;, and I’ll also copy the code below. If you find yourself in a similar situation, I hope this helps!&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# Code to create a monthly, directed dyadic panel of 
 # Militarized Interstate Dispute data, with directional initiation
@@ -265,10 +265,10 @@ master_dyads &amp;lt;- do.call(rbind, mclapply(1:length(years), make_dyads, mc.c
     
     <item>
       <title>Generalized Propensity Score Weighting</title>
-      <link>/adamlauretig.github.io/post/generalized-propensity-score-weighting/</link>
+      <link>adamlauretig.github.io/post/generalized-propensity-score-weighting/</link>
       <pubDate>Sat, 03 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>/adamlauretig.github.io/post/generalized-propensity-score-weighting/</guid>
+      <guid>adamlauretig.github.io/post/generalized-propensity-score-weighting/</guid>
       <description>&lt;div id=&#34;generalized-propensity-score-weighting&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Generalized Propensity Score Weighting&lt;/h1&gt;
 &lt;p&gt;Adam Lauretig 2018-11-03&lt;/p&gt;
@@ -606,40 +606,40 @@ mean((true_coef - m2_coef)^2)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Mapping Indonesia&#39;s Civil Service</title>
-      <link>/adamlauretig.github.io/policy_reports/world_bank_report/</link>
+      <link>adamlauretig.github.io/policy_reports/world_bank_report/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/policy_reports/world_bank_report/</guid>
+      <guid>adamlauretig.github.io/policy_reports/world_bank_report/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Mapping Indonesia&#39;s Civil Service</title>
-      <link>/adamlauretig.github.io/publication/world_bank_report/</link>
+      <link>adamlauretig.github.io/publication/world_bank_report/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/publication/world_bank_report/</guid>
+      <guid>adamlauretig.github.io/publication/world_bank_report/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Statistics and International Security</title>
-      <link>/adamlauretig.github.io/publication/stats_intl_security/</link>
+      <link>adamlauretig.github.io/publication/stats_intl_security/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/publication/stats_intl_security/</guid>
+      <guid>adamlauretig.github.io/publication/stats_intl_security/</guid>
       <description>&lt;p&gt;More detail can easily be written here using &lt;em&gt;Markdown&lt;/em&gt; and $\rm \LaTeX$ math code.&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>External Project</title>
-      <link>/adamlauretig.github.io/project/example-external-project/</link>
+      <link>adamlauretig.github.io/project/example-external-project/</link>
       <pubDate>Wed, 27 Apr 2016 00:00:00 -0400</pubDate>
       
-      <guid>/adamlauretig.github.io/project/example-external-project/</guid>
+      <guid>adamlauretig.github.io/project/example-external-project/</guid>
       <description></description>
     </item>
     
