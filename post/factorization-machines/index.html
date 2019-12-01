@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme" content="hugo-academic">
+  <meta name="generator" content="Hugo 0.42.1" />
+  <meta name="author" content="Adam Lauretig">
+
+  
+  
+  
+  
+    
+      
+    
+  
+  <meta name="description" content="Introduction I’ve recently become interested in factorization machines, a flexible augmentation of regression, which assumes the interactions between two variables factorizes into a low-rank matrix, the coefficient on the interaction is the result of a dot-product on latent factors. This structure regularizes coefficients, allows for non-linear higher-order interactions, and is computationally cheap to compute. It is a flexible, scalable, and interpretable model, useful for a variety of applications.
+However, resources for learning about and implementing factorization machines in R are scant, and resources for learning about and implementing Bayesian factorization machines even more so.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="adamlauretig.github.io/post/factorization-machines/">
+
+  
+
+
+  
+
+  
+  
+  <meta name="theme-color" content="#EF525B">
+  
+  
+  
+  
+    
+  
+  
+    
+    
+      
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+      
+    
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha512-6MXa8B6uaO18Hid6blRMetEIoPqHf7Ux1tnyIQdpt9qI5OACx7C+O3IVTr98vwGnlcg0LOLa02i9Y1HpVhlfiw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+  
+  
+  
+  
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,700%7cRoboto:400,400italic,700%7cRoboto&#43;Mono">
+  
+  <link rel="stylesheet" href="/adamlauretig.github.io/styles.css">
+  
+
+  
+
+  
+  <link rel="alternate" href="adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig">
+  <link rel="feed" href="adamlauretig.github.io/index.xml" type="application/rss+xml" title="Adam Lauretig">
+  
+
+  <link rel="manifest" href="/adamlauretig.github.io/site.webmanifest">
+  <link rel="icon" type="image/png" href="/adamlauretig.github.io/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/adamlauretig.github.io/img/icon-192.png">
+
+  <link rel="canonical" href="adamlauretig.github.io/post/factorization-machines/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@adamlauretig">
+  <meta property="twitter:creator" content="@adamlauretig">
+  
+  <meta property="og:site_name" content="Adam Lauretig">
+  <meta property="og:url" content="adamlauretig.github.io/post/factorization-machines/">
+  <meta property="og:title" content="Bayesian Factorization Machines in Stan | Adam Lauretig">
+  <meta property="og:description" content="Introduction I’ve recently become interested in factorization machines, a flexible augmentation of regression, which assumes the interactions between two variables factorizes into a low-rank matrix, the coefficient on the interaction is the result of a dot-product on latent factors. This structure regularizes coefficients, allows for non-linear higher-order interactions, and is computationally cheap to compute. It is a flexible, scalable, and interpretable model, useful for a variety of applications.
+However, resources for learning about and implementing factorization machines in R are scant, and resources for learning about and implementing Bayesian factorization machines even more so.">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2019-11-30T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2019-11-30T00:00:00&#43;00:00">
+  
+
+  
+  
+
+  <title>Bayesian Factorization Machines in Stan | Adam Lauretig</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#toc" data-offset="71" >
+
+<nav class="navbar navbar-default navbar-fixed-top" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="navbar-header">
+      
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target=".navbar-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+      <a class="navbar-brand" href="/adamlauretig.github.io/">Adam Lauretig</a>
+    </div>
+
+    
+    <div class="collapse navbar-collapse">
+
+      
+      
+      <ul class="nav navbar-nav navbar-right">
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#publications">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#teaching">
+            
+            <span>Teaching</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+        
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a href="/adamlauretig.github.io/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+      
+
+      
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Bayesian Factorization Machines in Stan</h1>
+
+    
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    
+    <time datetime="2019-11-30 00:00:00 &#43;0000 UTC" itemprop="datePublished dateModified">
+      Nov 30, 2019
+    </time>
+  </span>
+  <span itemscope itemprop="author publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Adam Lauretig">
+  </span>
+
+  
+
+  
+  
+
+  
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fa fa-folder"></i>
+    
+    <a href="adamlauretig.github.io/categories/bayesian-statistics/">Bayesian Statistics</a
+    >
+    
+  </span>
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Bayesian%20Factorization%20Machines%20in%20Stan&amp;url=adamlauretig.github.io%2fpost%2ffactorization-machines%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=adamlauretig.github.io%2fpost%2ffactorization-machines%2f"
+         target="_blank" rel="noopener">
+        <i class="fa fa-facebook"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=adamlauretig.github.io%2fpost%2ffactorization-machines%2f&amp;title=Bayesian%20Factorization%20Machines%20in%20Stan"
+         target="_blank" rel="noopener">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=adamlauretig.github.io%2fpost%2ffactorization-machines%2f&amp;title=Bayesian%20Factorization%20Machines%20in%20Stan"
+         target="_blank" rel="noopener">
+        <i class="fa fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Bayesian%20Factorization%20Machines%20in%20Stan&amp;body=adamlauretig.github.io%2fpost%2ffactorization-machines%2f">
+        <i class="fa fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      <div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>I’ve recently become interested in <a href="https://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf">factorization machines</a>, a flexible augmentation of regression, which assumes the interactions between two variables factorizes into a low-rank matrix, the coefficient on the interaction is the result of a dot-product on latent factors. This structure regularizes coefficients, allows for non-linear higher-order interactions, and is computationally cheap to compute. It is a flexible, scalable, and <strong>interpretable</strong> model, useful for a variety of applications.</p>
+<p>However, resources for learning about and implementing factorization machines in R are scant, and resources for learning about and implementing <a href="https://www.ismll.uni-hildesheim.de/pub/pdfs/FreudenthalerRendle_BayesianFactorizationMachines.pdf"><em>Bayesian</em> factorization machines</a> even more so.</p>
+<p>In this introduction, I’ll describe the generative model behind factorization machines, simulate data following this generative model, and then, provide some  code to fit factorization machines, with a discussion of prior choices, and checking model fit. I’ll conclude with a discussion of implications, use cases, and connections to other models.</p>
+</div>
+<div id="factorization-machines" class="section level1">
+<h1>Factorization Machines</h1>
+<div id="regression-model" class="section level2">
+<h2>Regression Model</h2>
+<p>Factorization machines are a straightforward extension to a generalized linear model with fixed effects. In a standard fixed effects model, we have:
+<span class="math display">\[
+y = X_{\text{Group 1}}\pmb{\beta}_{\text{Group 1}} + X_{\text{Group 2}}\pmb{\beta}_{\text{Group 2}} + \varepsilon \\
+\pmb{\beta}_{\text{Group 1}} \sim N(\mu, \tau^{2}) \\
+\pmb{\beta}_{\text{Group 2}} \sim N(\mu, \tau^{2}) \\
+\varepsilon \sim N(0, \sigma^{2})
+\]</span></p>
+<p>where <span class="math inline">\(X_{\text{Group 1}}\)</span> and <span class="math inline">\(X_{\text{Group 2}}\)</span> are indicator (if you’re a machine learning person, “one-hot”) variables, indicating unique membership in a group, such as individual ID, country name, movie name, or some other discrete variable. <span class="math inline">\(\pmb{\beta}_{\text{Group 2}}\)</span> and<span class="math inline">\(\pmb{\beta}_{\text{Group 2}}\)</span> are coefficients, <span class="math inline">\(\mu \text{ and } \tau^{2}\)</span> are treated as fixed, and not estimated, and <span class="math inline">\(\varepsilon\)</span> is a noise term.</p>
+<p>If we want to interact <span class="math inline">\(X_{\text{Group 1}}\)</span> and <span class="math inline">\(X_{\text{Group 2}}\)</span>, perhaps because we believe the slopes for each member of group two vary with each member of group one, we can estimate the following model:</p>
+<p><span class="math display">\[
+y = X_{\text{Group 1}}\pmb{\beta}_{\text{Group 1}} + X_{\text{Group 2}}\pmb{\beta}_{\text{Group 2}} + X_{\text{Group 1} * \text{Group 2}}\pmb{\beta}_{\text{Group 1 * Group 2}} + \varepsilon \\
+\pmb{\beta}_{\text{Group 1}} \sim N(\mu, \tau^{2}) \\
+\pmb{\beta}_{\text{Group 2}} \sim N(\mu, \tau^{2}) \\
+\pmb{\beta}_{\text{Group 1 * Group 2}} \sim N(\mu, \tau^{2}) \\
+\varepsilon \sim N(0, \sigma^{2})
+\]</span></p>
+<p>Where <span class="math inline">\(X_{\text{Group 1} * \text{Group 2}}\)</span> is an indicator for the interaction of <span class="math inline">\(X_{\text{Group 1}\)</span> and <span class="math inline">\(X_{\text{Group 2}}\)</span>, and <span class="math inline">\(\pmb{\beta}_{\text{Group 1 * Group 2}}\)</span> is a coefficient on each interaction.</p>
+<p>This can quickly fall prey to the “curse of dimensionality” as there would be parameters for each variable, and each interaction, and they would all need to be estimated separately. This is particularly a problem if the interactions are sparse, and we don’t observe all the interactions of group 1 with group 2.</p>
+</div>
+<div id="interactions-and-latent-factors" class="section level2">
+<h2>Interactions and Latent Factors</h2>
+<p>Factorization machines propose one solution: represention the coefficient on the interaction as a dot product of low-rank vectors, for each member of groups one and two. If we assume every member <span class="math inline">\(i \in I\)</span> of Group 1, and every member <span class="math inline">\(j \in J\)</span> of Group 2 is associated with a <span class="math inline">\(1 \times K\)</span> dimensional vector, in addition to an indicator variable.</p>
+<p>The generative model is
+<span class="math display">\[
+y_{ij} = X_{i}\beta_{i} + X_{j}\beta_{j} + \pmb{\gamma}_{i} \cdot \pmb{\delta}_{j}^{\top} + \varepsilon_{i,j} \\
+\pmb{\beta}_{} \sim N(\mu, \tau^{2}) \\
+\pmb{\beta}_{} \sim N(\mu, \tau^{2}) \\
+\gamma_{i,k} \sim  N(0, 1) \\
+\delta_{j,k} \sim  TN(0, \kappa_{j}) \\
+\kappa_{j} \sim \text{Exponential}(d_{0}) \\
+\varepsilon_{i,j} \sim N(0, \sigma^{2})
+\]</span></p>
+<p>where <span class="math inline">\(\pmb{\gamma}_{i}\)</span> and <span class="math inline">\(\pmb{\delta}_{j}\)</span> are <span class="math inline">\(K\)</span> dimensional vectors. Each element of <span class="math inline">\(\gamma_{i,k} \in \pmb{\gamma}_{i}\)</span> is distributed according to a standard normal distribtion. However, to put a prior on the rank for the factor matrix, I turn to an approach put forward by <a href="https://gist.github.com/khakieconomics/d0ef578262f575654a2dbd9b4ce4cc40">Jim Savage</a>, where $_{j,k} $ are distributed half-normally, with an exponential-distributed prior (<span class="math inline">\(\kappa_{j}\)</span>) on the variance. The prior on <span class="math inline">\(\kappa_{j}\)</span> is a user-specified hyperparameter.</p>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+<div class="article-tags">
+  
+  <a class="btn btn-primary btn-outline" href="adamlauretig.github.io/tags/bayesian-statistics/">Bayesian Statistics</a>
+  
+</div>
+
+
+
+
+    
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="powered-by">
+
+      &copy; 2018 &middot; 
+
+      Powered by the
+      <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+      <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+      <span class="pull-right" aria-hidden="true">
+        <a href="#" id="back_to_top">
+          <span class="button_icon">
+            <i class="fa fa-chevron-up fa-2x"></i>
+          </span>
+        </a>
+      </span>
+
+    </p>
+  </div>
+</footer>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn-large" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Cite</h4>
+      </div>
+      <div>
+        <pre><code class="modal-body tex"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary btn-outline js-copy-cite" href="#" target="_blank">
+          <i class="fa fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-primary btn-outline js-download-cite" href="#" target="_blank">
+          <i class="fa fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha512-3P8rXCuGJdNZOnUx/03c1jOTnMn3rP63nBip5gOP2qmUh5YAdVAvFZ1E+QLZZbC1rtMrQb+mah3AfYW11RUrWA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+    
+    
+    <script src="/adamlauretig.github.io/js/hugo-academic.js"></script>
+    
+
+    
+    
+      
+      
+      <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+      
+
+      
+
+      
+
+      <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+
+  </body>
+</html>
+

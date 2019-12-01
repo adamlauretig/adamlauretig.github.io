@@ -327,14 +327,6 @@ A brief note: “tokenizing” refers to splitting a document into words or phra
 <p>Here, I test the approach on the US presidential inauagural addresses corpus in <em>quanteda</em>. I like this corpus because it’s small enough that computation is quick, and there is enough thematic structure that human inspection can tell if the results “make sense.”</p>
 <pre class="r"><code>options(stringsAsFactors = FALSE)
 library(quanteda)</code></pre>
-<pre><code>## Registered S3 methods overwritten by &#39;ggplot2&#39;:
-##   method         from 
-##   [.quosures     rlang
-##   c.quosures     rlang
-##   print.quosures rlang</code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;dplyr&#39;:
-##   method               from  
-##   as.data.frame.tbl_df tibble</code></pre>
 <pre><code>## Package version: 1.5.1</code></pre>
 <pre><code>## Parallel computing: 2 of 8 threads used.</code></pre>
 <pre><code>## See https://quanteda.io for tutorials and examples.</code></pre>
@@ -422,19 +414,19 @@ closest_vector &lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&quot;united_states&quot;, ], embeds)</code></pre>
-<pre><code>##      united_states            defects       constitution 
-##          1.0000000          0.8837917          0.8777792 
-##            article general_government            several 
-##          0.8678937          0.8479714          0.8322585 
-##     administration        legislative        suppression 
-##          0.8322232          0.8304837          0.8250438 
-##          amendment 
-##          0.8214834</code></pre>
+<pre><code>##      united_states       constitution          functions 
+##          1.0000000          0.9084460          0.8502944 
+##            several general_government              under 
+##          0.8476603          0.8408349          0.8401922 
+##     administration            article             vested 
+##          0.8365635          0.8335312          0.8297912 
+##        legislative 
+##          0.8246353</code></pre>
 <pre class="r"><code>closest_vector(embeds[&quot;americans&quot;, ], embeds)</code></pre>
-<pre><code>##  americans       live       face   together  america&#39;s      god&#39;s 
-##  1.0000000  0.9253382  0.9103516  0.9082905  0.9074560  0.9041215 
-##    resolve         us determined  mountains 
-##  0.9039775  0.8986582  0.8977091  0.8965726</code></pre>
+<pre><code>##  americans       face  america&#39;s determined      quiet    resolve 
+##  1.0000000  0.9308588  0.9240170  0.9191956  0.9184439  0.9046124 
+##   together      today       live       come 
+##  0.8964424  0.8929065  0.8922405  0.8910928</code></pre>
 <p>Not bad for an initial analysis!</p>
 </div>
 

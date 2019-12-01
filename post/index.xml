@@ -13,6 +13,16 @@
     
     
     <item>
+      <title>Bayesian Factorization Machines in Stan</title>
+      <link>adamlauretig.github.io/post/factorization-machines/</link>
+      <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>adamlauretig.github.io/post/factorization-machines/</guid>
+      <description>Introduction I’ve recently become interested in factorization machines, a flexible augmentation of regression, which assumes the interactions between two variables factorizes into a low-rank matrix, the coefficient on the interaction is the result of a dot-product on latent factors. This structure regularizes coefficients, allows for non-linear higher-order interactions, and is computationally cheap to compute. It is a flexible, scalable, and interpretable model, useful for a variety of applications.
+However, resources for learning about and implementing factorization machines in R are scant, and resources for learning about and implementing Bayesian factorization machines even more so.</description>
+    </item>
+    
+    <item>
       <title>Tokenizing on Stopwords</title>
       <link>adamlauretig.github.io/post/tokenizing-on-stopwords/</link>
       <pubDate>Sun, 10 Feb 2019 00:00:00 +0000</pubDate>

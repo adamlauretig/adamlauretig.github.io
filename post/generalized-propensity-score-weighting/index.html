@@ -317,7 +317,8 @@
     <div class="article-style" itemprop="articleBody">
       <div id="generalized-propensity-score-weighting" class="section level1">
 <h1>Generalized Propensity Score Weighting</h1>
-<p>Adam Lauretig 2018-11-03</p>
+<p>Adam Lauretig
+2018-11-03</p>
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
@@ -540,7 +541,7 @@ head(observed_covariates)</code></pre>
 ## 5:  5    1 0.2455929 0.07894221 0.2261046 0.9730124
 ## 6:  6    1 2.9160902 1.19751095 1.2838997 4.0934380</code></pre>
 <pre class="r"><code>observed_covariates[, normalized_treatment := (treatment - mean(treatment))/sd(treatment) ]</code></pre>
-<p>Now, to make our weights. Following (Austin 2018), we’ll perform OLS regression on our treatment, as our outcome is continuous. Then, for the denominator of our inverse propensity score weights, to calculate the probability of a particular treatment <em>a</em><sup>*</sup>, we will calculate <em>P<strong>r<em>(</em>A<em> = </em>a<em>|</em>a<em><sup>*</sup>, </em>σ<em><sub></em>a<em><sup>*</sup></sub>). The stabilizing numerator is </em>P</strong>r</em>(<em>A</em><sup>*</sup> = <em>a</em><sup>*</sup>|0, 1) (Z. Zhang et al. 2016). Here, we know that we need a single lag of our data to estimate the propensity scores. We then take the product of our stabilized weights from each time period, in order to produce individual-specific weights.</p>
+<p>Now, to make our weights. Following (Austin 2018), we’ll perform OLS regression on our treatment, as our outcome is continuous. Then, for the denominator of our inverse propensity score weights, to calculate the probability of a particular treatment <em>a</em><sup>*</sup>, we will calculate <em>P<strong>r<em>(</em>A<em> = </em>a<em>|</em>a<em><sup>*</sup>, </em>σ<em><sub></em>a<em><sup>*</sup></sub>). The stabilizing numerator is </em>P</strong>r</em>(<em>A</em><sup>*</sup> = <em>a</em><sup>*</sup>|0, 1) (Z. Zhang et al. 2016). Here, we know that we need a single lag of our data to estimate the propensity scores. We then take the product of our stabilized weights from each time period, in order to produce individual-specific weights.</p>
 <pre class="r"><code>observed_covariates_lag &lt;- as.data.table(observed_covariates)
 observed_covariates_lag[, time := time + 1]
 setnames(observed_covariates_lag, 
