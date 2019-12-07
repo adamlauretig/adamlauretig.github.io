@@ -11,60 +11,6 @@
     <atom:link href="adamlauretig.github.io/" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Bayesian Factorization Machines in Stan</title>
-      <link>adamlauretig.github.io/post/factorization-machines/</link>
-      <pubDate>Sat, 30 Nov 2019 00:00:00 +0000</pubDate>
-      
-      <guid>adamlauretig.github.io/post/factorization-machines/</guid>
-      <description>&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Introduction&lt;/h1&gt;
-&lt;p&gt;I’ve recently become interested in &lt;a href=&#34;https://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf&#34;&gt;factorization machines&lt;/a&gt;, a flexible augmentation of regression, which assumes the interactions between two variables factorizes into a low-rank matrix, the coefficient on the interaction is the result of a dot-product on latent factors. This structure regularizes coefficients, allows for non-linear higher-order interactions, and is computationally cheap to compute. It is a flexible, scalable, and &lt;strong&gt;interpretable&lt;/strong&gt; model, useful for a variety of applications.&lt;/p&gt;
-&lt;p&gt;However, resources for learning about and implementing factorization machines in R are scant, and resources for learning about and implementing &lt;a href=&#34;https://www.ismll.uni-hildesheim.de/pub/pdfs/FreudenthalerRendle_BayesianFactorizationMachines.pdf&#34;&gt;&lt;em&gt;Bayesian&lt;/em&gt; factorization machines&lt;/a&gt; even more so.&lt;/p&gt;
-&lt;p&gt;In this introduction, I’ll describe the generative model behind factorization machines, simulate data following this generative model, and then, provide some  code to fit factorization machines, with a discussion of prior choices, and checking model fit. I’ll conclude with a discussion of implications, use cases, and connections to other models.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;factorization-machines&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Factorization Machines&lt;/h1&gt;
-&lt;div id=&#34;regression-model&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Regression Model&lt;/h2&gt;
-&lt;p&gt;Factorization machines are a straightforward extension to a generalized linear model with fixed effects. In a standard fixed effects model, we have:
-&lt;span class=&#34;math display&#34;&gt;\[
-y = X_{\text{Group 1}}\pmb{\beta}_{\text{Group 1}} + X_{\text{Group 2}}\pmb{\beta}_{\text{Group 2}} + \varepsilon \\
-\pmb{\beta}_{\text{Group 1}} \sim N(\mu, \tau^{2}) \\
-\pmb{\beta}_{\text{Group 2}} \sim N(\mu, \tau^{2}) \\
-\varepsilon \sim N(0, \sigma^{2})
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(X_{\text{Group 1}}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(X_{\text{Group 2}}\)&lt;/span&gt; are indicator (if you’re a machine learning person, “one-hot”) variables, indicating unique membership in a group, such as individual ID, country name, movie name, or some other discrete variable. &lt;span class=&#34;math inline&#34;&gt;\(\pmb{\beta}_{\text{Group 2}}\)&lt;/span&gt; and&lt;span class=&#34;math inline&#34;&gt;\(\pmb{\beta}_{\text{Group 2}}\)&lt;/span&gt; are coefficients, &lt;span class=&#34;math inline&#34;&gt;\(\mu \text{ and } \tau^{2}\)&lt;/span&gt; are treated as fixed, and not estimated, and &lt;span class=&#34;math inline&#34;&gt;\(\varepsilon\)&lt;/span&gt; is a noise term.&lt;/p&gt;
-&lt;p&gt;If we want to interact &lt;span class=&#34;math inline&#34;&gt;\(X_{\text{Group 1}}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(X_{\text{Group 2}}\)&lt;/span&gt;, perhaps because we believe the slopes for each member of group two vary with each member of group one, we can estimate the following model:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-y = X_{\text{Group 1}}\pmb{\beta}_{\text{Group 1}} + X_{\text{Group 2}}\pmb{\beta}_{\text{Group 2}} + X_{\text{Group 1} * \text{Group 2}}\pmb{\beta}_{\text{Group 1 * Group 2}} + \varepsilon \\
-\pmb{\beta}_{\text{Group 1}} \sim N(\mu, \tau^{2}) \\
-\pmb{\beta}_{\text{Group 2}} \sim N(\mu, \tau^{2}) \\
-\pmb{\beta}_{\text{Group 1 * Group 2}} \sim N(\mu, \tau^{2}) \\
-\varepsilon \sim N(0, \sigma^{2})
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Where &lt;span class=&#34;math inline&#34;&gt;\(X_{\text{Group 1} * \text{Group 2}}\)&lt;/span&gt; is an indicator for the interaction of &lt;span class=&#34;math inline&#34;&gt;\(X_{\text{Group 1}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(X_{\text{Group 2}}\)&lt;/span&gt;, and &lt;span class=&#34;math inline&#34;&gt;\(\pmb{\beta}_{\text{Group 1 * Group 2}}\)&lt;/span&gt; is a coefficient on each interaction.&lt;/p&gt;
-&lt;p&gt;This can quickly fall prey to the “curse of dimensionality” as there would be parameters for each variable, and each interaction, and they would all need to be estimated separately. This is particularly a problem if the interactions are sparse, and we don’t observe all the interactions of group 1 with group 2.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;interactions-and-latent-factors&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Interactions and Latent Factors&lt;/h2&gt;
-&lt;p&gt;Factorization machines propose one solution: represention the coefficient on the interaction as a dot product of low-rank vectors, for each member of groups one and two. If we assume every member &lt;span class=&#34;math inline&#34;&gt;\(i \in I\)&lt;/span&gt; of Group 1, and every member &lt;span class=&#34;math inline&#34;&gt;\(j \in J\)&lt;/span&gt; of Group 2 is associated with a &lt;span class=&#34;math inline&#34;&gt;\(1 \times K\)&lt;/span&gt; dimensional vector, in addition to an indicator variable.&lt;/p&gt;
-&lt;p&gt;The generative model is
-&lt;span class=&#34;math display&#34;&gt;\[
-y_{ij} = X_{i}\beta_{i} + X_{j}\beta_{j} + \pmb{\gamma}_{i} \cdot \pmb{\delta}_{j}^{\top} + \varepsilon_{i,j} \\
-\pmb{\beta}_{} \sim N(\mu, \tau^{2}) \\
-\pmb{\beta}_{} \sim N(\mu, \tau^{2}) \\
-\gamma_{i,k} \sim  N(0, 1) \\
-\delta_{j,k} \sim  TN(0, \kappa_{j}) \\
-\kappa_{j} \sim \text{Exponential}(d_{0}) \\
-\varepsilon_{i,j} \sim N(0, \sigma^{2})
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(\pmb{\gamma}_{i}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\pmb{\delta}_{j}\)&lt;/span&gt; are &lt;span class=&#34;math inline&#34;&gt;\(K\)&lt;/span&gt; dimensional vectors. Each element of &lt;span class=&#34;math inline&#34;&gt;\(\gamma_{i,k} \in \pmb{\gamma}_{i}\)&lt;/span&gt; is distributed according to a standard normal distribtion. However, to put a prior on the rank for the factor matrix, I turn to an approach put forward by &lt;a href=&#34;https://gist.github.com/khakieconomics/d0ef578262f575654a2dbd9b4ce4cc40&#34;&gt;Jim Savage&lt;/a&gt;, where $_{j,k} $ are distributed half-normally, with an exponential-distributed prior (&lt;span class=&#34;math inline&#34;&gt;\(\kappa_{j}\)&lt;/span&gt;) on the variance. The prior on &lt;span class=&#34;math inline&#34;&gt;\(\kappa_{j}\)&lt;/span&gt; is a user-specified hyperparameter.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Identification and Inference in Bayesian Word Embeddings</title>
       <link>adamlauretig.github.io/publication/bwe/</link>
       <pubDate>Mon, 01 Apr 2019 00:00:00 -0400</pubDate>
@@ -179,19 +125,19 @@ closest_vector &amp;lt;- function(vec1, mat1){
 }
 
 closest_vector(embeds[&amp;quot;united_states&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##      united_states       constitution          functions 
-##          1.0000000          0.9084460          0.8502944 
-##            several general_government              under 
-##          0.8476603          0.8408349          0.8401922 
-##     administration            article             vested 
-##          0.8365635          0.8335312          0.8297912 
-##        legislative 
-##          0.8246353&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##      united_states       constitution general_government 
+##          1.0000000          0.8533548          0.8366138 
+## federal_government            several        suppression 
+##          0.8292616          0.8217113          0.8132411 
+##     accountability             powers            article 
+##          0.8131503          0.8116778          0.8052777 
+##              under 
+##          0.8050901&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;closest_vector(embeds[&amp;quot;americans&amp;quot;, ], embeds)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;##  americans       face  america&amp;#39;s determined      quiet    resolve 
-##  1.0000000  0.9308588  0.9240170  0.9191956  0.9184439  0.9046124 
-##   together      today       live       come 
-##  0.8964424  0.8929065  0.8922405  0.8910928&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   americans        live        face        come       quiet  determined 
+##   1.0000000   0.9228806   0.9128486   0.9126492   0.9079122   0.9020943 
+##     resolve         old          us one_another 
+##   0.8949935   0.8940421   0.8936058   0.8902363&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Not bad for an initial analysis!&lt;/p&gt;
 &lt;/div&gt;
 </description>
