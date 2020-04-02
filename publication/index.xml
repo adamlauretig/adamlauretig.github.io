@@ -2,40 +2,40 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Publications on Adam Lauretig</title>
-    <link>adamlauretig.github.io/publication/</link>
+    <link>/adamlauretig.github.io/publication/</link>
     <description>Recent content in Publications on Adam Lauretig</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018</copyright>
     <lastBuildDate>Sun, 01 Jan 2017 00:00:00 -0500</lastBuildDate>
     
-	<atom:link href="adamlauretig.github.io/publication/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/adamlauretig.github.io/publication/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Identification and Inference in Bayesian Word Embeddings</title>
-      <link>adamlauretig.github.io/publication/bwe/</link>
+      <link>/adamlauretig.github.io/publication/bwe/</link>
       <pubDate>Mon, 01 Apr 2019 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/publication/bwe/</guid>
+      <guid>/adamlauretig.github.io/publication/bwe/</guid>
       <description>More detail can easily be written here using Markdown and $\rm \LaTeX$ math code.</description>
     </item>
     
     <item>
       <title>Mapping Indonesia&#39;s Civil Service</title>
-      <link>adamlauretig.github.io/publication/world_bank_report/</link>
+      <link>/adamlauretig.github.io/publication/world_bank_report/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/publication/world_bank_report/</guid>
+      <guid>/adamlauretig.github.io/publication/world_bank_report/</guid>
       <description>More detail can easily be written here using Markdown and $\rm \LaTeX$ math code.</description>
     </item>
     
     <item>
       <title>Statistics and International Security</title>
-      <link>adamlauretig.github.io/publication/stats_intl_security/</link>
+      <link>/adamlauretig.github.io/publication/stats_intl_security/</link>
       <pubDate>Sun, 01 Apr 2018 00:00:00 -0400</pubDate>
       
-      <guid>adamlauretig.github.io/publication/stats_intl_security/</guid>
+      <guid>/adamlauretig.github.io/publication/stats_intl_security/</guid>
       <description>More detail can easily be written here using Markdown and $\rm \LaTeX$ math code.</description>
     </item>
     
